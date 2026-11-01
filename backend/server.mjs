@@ -2301,8 +2301,25 @@ async function handle(req, res, url) {
     return send(res, 202, { ok: true });
   }
 
+  // Static frontend serving (production single-container deploy)
+  const distDir = path.resolve(process.cwd(), 'frontend', 'dist');
+  if (fs.existsSync(distDir)) {
+    const filePath = path.join(distDir, p === '/' ? 'index.html' : p);
+    if (filePath.startsWith(distDir) && fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+      const ext = path.extname(filePath).toLowerCase();
+      const types = { '.html': 'text/html', '.js': 'application/javascript', '.css': 'text/css', '.json': 'application/json', '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.svg': 'image/svg+xml', '.ico': 'image/x-icon', '.webp': 'image/webp', '.woff': 'font/woff', '.woff2': 'font/woff2', '.ttf': 'font/ttf' };
+      res.writeHead(200, { 'Content-Type': types[ext] || 'application/octet-stream', 'Cache-Control': ext === '.html' ? 'no-cache' : 'public, max-age=31536000' });
+      return fs.createReadStream(filePath).pipe(res);
+    }
+    // SPA fallback
+    const indexFile = path.join(distDir, 'index.html');
+    if (fs.existsSync(indexFile)) {
+      res.writeHead(200, { 'Content-Type': 'text/html', 'Cache-Control': 'no-cache' });
+      return fs.createReadStream(indexFile).pipe(res);
+    }
+  }
+
   return fail(res, 404, 'not_found', 'Endpoint not found.');
-}
 
 function downloadHistory(userId) {
   return db.prepare(`
