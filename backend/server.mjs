@@ -2320,6 +2320,7 @@ async function handle(req, res, url) {
   }
 
   return fail(res, 404, 'not_found', 'Endpoint not found.');
+}
 
 function downloadHistory(userId) {
   return db.prepare(`
