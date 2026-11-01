@@ -4,6 +4,7 @@ import { Hero } from '../sections/home/Hero';
 import { BrandStory } from '../sections/home/BrandStory';
 import { OnTheTracks } from '../sections/home/OnTheTracks';
 import { BeyondTheTracks } from '../sections/home/BeyondTheTracks';
+import { Showcase } from '../sections/home/Showcase';
 import { CollectionGallery } from '../sections/home/CollectionGallery';
 import { FeaturedRelease } from '../sections/home/FeaturedRelease';
 import { Community } from '../sections/home/Community';
@@ -23,6 +24,7 @@ export function Home() {
       <BrandStory />
       <OnTheTracks />
       <BeyondTheTracks />
+      <Showcase />
       <CollectionGallery />
       <FeaturedRelease />
       <Community />

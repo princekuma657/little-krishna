@@ -23,6 +23,9 @@ backend/data/session.secret
 # Storage
 backend/storage/*.zip
 
+# Raw asset scratch folder (finished copies live in frontend/src/assets)
+assest/
+
 # OS
 .DS_Store
 Thumbs.db
