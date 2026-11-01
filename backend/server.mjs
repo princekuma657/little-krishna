@@ -1153,6 +1153,28 @@ async function handle(req, res, url) {
       return fail(res, 403, 'download_denied', access.reason);
     }
     if (!row.storage_reference) return fail(res, 409, 'file_unavailable', 'This content has no downloadable package.');
+    // Google Drive private direct download
+    if (row.storage_reference.startsWith('drive:')) {
+      const fileId = row.storage_reference.slice('drive:'.length).trim();
+      if (!fileId) return fail(res, 409, 'file_unavailable', 'Google Drive file reference is invalid.');
+      const { isDriveConfigured, streamFile, getFileMetadata } = await import('./lib/google-drive.mjs');
+      if (!isDriveConfigured()) return fail(res, 503, 'drive_not_configured', 'Google Drive storage is not configured. Set GOOGLE_DRIVE_CLIENT_ID, GOOGLE_DRIVE_CLIENT_SECRET, GOOGLE_DRIVE_REFRESH_TOKEN.');
+      try {
+        const meta = await getFileMetadata(fileId);
+        const filename = `${row.slug}-v${row.version}.zip`.replace(/[^a-z0-9._-]/gi, '_');
+        audit(user.id, 'download.started', 'content', row.id, { provider: 'google_drive', fileId });
+        await streamFile(fileId, res, filename, meta.size);
+        if (record.status !== 'completed') {
+          db.prepare("UPDATE downloads SET status = 'completed', completion_time = ? WHERE id = ?").run(nowIso(), record.id);
+          db.prepare('UPDATE content SET download_count = download_count + 1 WHERE id = ?').run(record.content_id);
+        }
+      } catch (err) {
+        audit(user.id, 'download.failed', 'content', row.id, { reason: String(err.message).slice(0, 200), provider: 'google_drive' });
+        db.prepare("UPDATE downloads SET status = 'failed', failure_reason = ? WHERE id = ?").run(String(err.message).slice(0, 500), record.id);
+        if (!res.headersSent) return fail(res, 502, 'drive_delivery_failed', 'Failed to retrieve the file from storage. Please try again.');
+      }
+      return;
+    }
     const storageName = path.basename(row.storage_reference.replace(/^(?:demo|stored|storage):/, ''));
     const file = path.join(STORAGE_DIR, storageName);
     if (!file.startsWith(STORAGE_DIR) || !fs.existsSync(file)) return fail(res, 409, 'file_unavailable', 'The package is missing from storage.');
@@ -2184,6 +2206,45 @@ async function handle(req, res, url) {
       fs.writeFileSync(path.join(STORAGE_DIR, 'images', name), buffer);
       const url = `/api/v1/community/media/${name}`; // reuse media route? not exact; return local path
       return send(res, 201, { ok: true, url: `/storage/images/${name}`, publicId: name, local: true });
+    }
+
+    if (p === '/api/v1/admin/storage/drive/status' && method === 'GET') {
+      if (!canContent) return fail(res, 403, 'forbidden', 'Content manager access required.');
+      const { testConnection } = await import('./lib/google-drive.mjs');
+      const result = await testConnection();
+      return send(res, result.ok ? 200 : 503, { ok: result.ok, ...result });
+    }
+
+    if (p === '/api/v1/admin/storage/drive/metadata' && method === 'POST') {
+      if (!canContent) return fail(res, 403, 'forbidden', 'Content manager access required.');
+      const body = await readJson(req);
+      const fileId = String(body.fileId || body.file_id || '').trim();
+      if (!fileId) return validationError(res, ['Drive file ID is required.']);
+      const { getFileMetadata, checkAvailability } = await import('./lib/google-drive.mjs');
+      const result = await checkAvailability(fileId);
+      if (!result.available) return fail(res, 404, 'drive_file_unavailable', result.error);
+      return send(res, 200, { ok: true, metadata: result.metadata });
+    }
+
+    if (p === '/api/v1/admin/storage/drive/register' && method === 'POST') {
+      if (!canContent) return fail(res, 403, 'forbidden', 'Content manager access required.');
+      const body = await readJson(req);
+      const contentId = String(body.contentId || body.content_id || '').trim();
+      const fileId = String(body.fileId || body.file_id || '').trim();
+      if (!contentId || !fileId) return validationError(res, ['Content ID and Drive file ID are required.']);
+      const contentRow = db.prepare('SELECT * FROM content WHERE id = ?').get(contentId);
+      if (!contentRow) return fail(res, 404, 'not_found', 'Content not found.');
+      const { getFileMetadata, checkAvailability } = await import('./lib/google-drive.mjs');
+      const avail = await checkAvailability(fileId);
+      if (!avail.available) return fail(res, 404, 'drive_file_unavailable', avail.error);
+      const meta = avail.metadata;
+      const storageId = uuid();
+      db.prepare('INSERT INTO storage_objects (id, provider, provider_file_id, object_type, file_name, file_size, sha256, availability_status, last_verified_at, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+        .run(storageId, 'google_drive', fileId, 'package', meta.name, meta.size, null, 'available', nowIso(), nowIso());
+      db.prepare('UPDATE content SET storage_reference = ?, storage_object_id = ?, file_size = ?, updated_at = ? WHERE id = ?')
+        .run(`drive:${fileId}`, storageId, meta.size, nowIso(), contentId);
+      audit(user.id, 'admin.drive_file_registered', 'content', contentId, { fileId, fileName: meta.name, size: meta.size });
+      return send(res, 200, { ok: true, item: { contentId, fileId, fileName: meta.name, fileSize: meta.size, storageObjectId: storageId } });
     }
 
     if (p === '/api/v1/admin/settings' && method === 'GET') {

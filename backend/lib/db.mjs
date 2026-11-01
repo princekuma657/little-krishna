@@ -350,6 +350,24 @@ CREATE TABLE IF NOT EXISTS security_settings (
   updated_at TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS storage_provider_settings (
+  id TEXT PRIMARY KEY,
+  provider TEXT NOT NULL DEFAULT 'local',
+  setting_key TEXT NOT NULL,
+  setting_value TEXT NOT NULL DEFAULT '{}',
+  updated_at TEXT NOT NULL,
+  UNIQUE(provider, setting_key)
+);
+
+CREATE TABLE IF NOT EXISTS security_events (
+  id TEXT PRIMARY KEY,
+  user_id TEXT REFERENCES profiles(id) ON DELETE SET NULL,
+  event_type TEXT NOT NULL,
+  severity TEXT NOT NULL DEFAULT 'info',
+  metadata TEXT NOT NULL DEFAULT '{}',
+  created_at TEXT NOT NULL
+);
+
 CREATE INDEX IF NOT EXISTS idx_visitor_sessions_ip ON visitor_sessions(ip_address);
 CREATE INDEX IF NOT EXISTS idx_visitor_sessions_last ON visitor_sessions(last_seen_at);
 CREATE INDEX IF NOT EXISTS idx_visitor_sessions_country ON visitor_sessions(country);
