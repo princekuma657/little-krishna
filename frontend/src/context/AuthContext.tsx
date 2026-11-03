@@ -12,7 +12,7 @@ interface ResetResult {
 interface AuthContextValue extends AuthSession {
   loading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string, username: string) => Promise<void>;
+  signUp: (email: string, password: string, username: string, invitationCode: string) => Promise<void>;
   signOut: () => Promise<void>;
   requestPasswordReset: (email: string) => Promise<ResetResult>;
   refresh: () => Promise<void>;
@@ -58,8 +58,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const res = await api.post<MeResponse>('/auth/login', { email, password });
         applyUser(res.user);
       },
-      signUp: async (email: string, password: string, username: string) => {
-        const res = await api.post<MeResponse>('/auth/register', { email, password, username });
+      signUp: async (email: string, password: string, username: string, invitationCode: string) => {
+        const res = await api.post<MeResponse>('/auth/register', { email, password, username, invitationCode });
         applyUser(res.user);
       },
       signOut: async () => {

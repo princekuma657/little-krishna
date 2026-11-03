@@ -15,6 +15,7 @@ export function Register() {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [invitationCode, setInvitationCode] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -39,7 +40,7 @@ export function Register() {
     setBusy(true);
     setError(null);
     try {
-      await signUp(email, password, username);
+      await signUp(email, password, username, invitationCode);
       navigate(destination);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Registration failed.');
@@ -99,6 +100,10 @@ export function Register() {
             <div className="field">
               <label className="label" htmlFor="password">Password</label>
               <input id="password" className="input" type="password" required minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Minimum 8 characters" />
+            </div>
+            <div className="field">
+              <label className="label" htmlFor="invitationCode">Invitation Code</label>
+              <input id="invitationCode" className="input" required value={invitationCode} onChange={(e) => setInvitationCode(e.target.value)} placeholder="LK-..." />
             </div>
             <button className="btn btn--primary btn--block" type="submit" disabled={busy}>
               {busy ? 'Creating Account…' : 'Create Account'}

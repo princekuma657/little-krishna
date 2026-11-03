@@ -595,3 +595,34 @@ CREATE TRIGGER on_auth_user_created
 --    INSERT INTO public.user_roles (user_id, role_id, created_at)
 --    SELECT '<ADMIN_USER_UUID>', r.id, now() FROM public.roles r WHERE r.name = 'super_admin';
 -- 3. Remove this comment block in production.
+-- ============================================================
+-- 11. Invitation-only registration tables
+-- ============================================================
+CREATE TABLE IF NOT EXISTS public.invitation_codes (
+  id TEXT PRIMARY KEY,
+  code_hash TEXT NOT NULL UNIQUE,
+  created_by UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+  intended_email TEXT,
+  max_uses INTEGER NOT NULL DEFAULT 1,
+  uses_count INTEGER NOT NULL DEFAULT 0,
+  expires_at TIMESTAMPTZ,
+  revoked_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS public.invitation_redemptions (
+  id TEXT PRIMARY KEY,
+  invitation_code_id TEXT NOT NULL REFERENCES public.invitation_codes(id) ON DELETE CASCADE,
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  redeemed_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  UNIQUE (invitation_code_id, user_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_invitation_codes_hash ON public.invitation_codes(code_hash);
+CREATE INDEX IF NOT EXISTS idx_invitation_redemptions_code ON public.invitation_redemptions(invitation_code_id);
+
+ALTER TABLE public.invitation_codes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.invitation_redemptions ENABLE ROW LEVEL SECURITY;
+-- Backend (service role) only; no anon access.
+CREATE POLICY "invitation_codes_service_only" ON public.invitation_codes FOR ALL USING (false);
+CREATE POLICY "invitation_redemptions_service_only" ON public.invitation_redemptions FOR ALL USING (false);

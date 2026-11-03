@@ -1,16 +1,151 @@
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
-import { DatabaseSync } from 'node:sqlite';
 import { hashPassword, hashToken, randomToken, uuid, nowIso } from './security.mjs';
 import { ensureDemoPackage } from './zip.mjs';
 
 const DATA_DIR = path.resolve(process.cwd(), 'backend/data');
 fs.mkdirSync(DATA_DIR, { recursive: true });
 
-export const db = new DatabaseSync(path.join(DATA_DIR, 'littlekrishna.db'));
+const DATABASE_URL = process.env.SUPABASE_DB_URL || process.env.DATABASE_URL || '';
+const USE_POSTGRES = Boolean(DATABASE_URL);
 
-db.exec(`
+let sqliteDb = null;
+let pgPool = null;
+
+if (USE_POSTGRES) {
+  const pg = await import('pg');
+  pg.default.types.setTypeParser(20, (v) => (v === null ? null : Number(v))); // int8
+  pg.default.types.setTypeParser(1700, (v) => (v === null ? null : Number(v))); // numeric
+  pgPool = new pg.default.Pool({
+    connectionString: DATABASE_URL,
+    ssl: DATABASE_URL.includes('supabase') ? { rejectUnauthorized: false } : undefined,
+    max: 1,
+  });
+  pgPool.on('error', (err) => console.error('[LittleKrishna DB] pool error', err));
+}
+
+if (!USE_POSTGRES) {
+  const { DatabaseSync } = await import('node:sqlite');
+  sqliteDb = new DatabaseSync(path.join(DATA_DIR, 'littlekrishna.db'));
+}
+
+function toParams(params) {
+  return params.map((p) => (p === undefined ? null : p));
+}
+
+function translateSql(sql) {
+  let s = sql;
+  // PRAGMA table_info handled separately by caller; pass through otherwise
+  // INSERT OR IGNORE -> ON CONFLICT DO NOTHING
+  if (/INSERT\s+OR\s+IGNORE\s+INTO/i.test(s)) {
+    s = s.replace(/INSERT\s+OR\s+IGNORE\s+INTO/gi, 'INSERT INTO');
+    s = s.trim().replace(/;?\s*$/, '') + ' ON CONFLICT DO NOTHING';
+  }
+  // LIKE -> ILIKE (SQLite LIKE is case-insensitive by default)
+  s = s.replace(/\bNOT\s+LIKE\b/gi, 'NOT ILIKE').replace(/\bLIKE\b/gi, 'ILIKE');
+  // ? -> $n (outside string literals)
+  let out = '';
+  let i = 0;
+  let n = 0;
+  let inStr = null;
+  while (i < s.length) {
+    const c = s[i];
+    if (inStr) {
+      out += c;
+      if (c === inStr) {
+        // handle '' escape
+        if (s[i + 1] === inStr) { out += s[i + 1]; i += 2; continue; }
+        inStr = null;
+      }
+      i++;
+      continue;
+    }
+    if (c === "'" || c === '"') { inStr = c; out += c; i++; continue; }
+    if (c === '?') { n++; out += '$' + n; i++; continue; }
+    out += c;
+    i++;
+  }
+  return out;
+}
+
+function isPragmaTableInfo(sql) {
+  const m = sql.match(/^\s*PRAGMA\s+table_info\(\s*['"]?(\w+)['"]?\s*\)\s*;?\s*$/i);
+  return m ? m[1] : null;
+}
+
+const db = {
+  prepare(sql) {
+    const tbl = isPragmaTableInfo(sql);
+    if (tbl) {
+      if (USE_POSTGRES) {
+        const text = `SELECT column_name AS name FROM information_schema.columns WHERE lower(table_name) = lower($1) ORDER BY ordinal_position`;
+        return {
+          async all(...params) {
+            const r = await pgPool.query(text, [tbl]);
+            return r.rows;
+          },
+          async get(...params) {
+            const r = await pgPool.query(text, [tbl]);
+            return r.rows[0];
+          },
+          async run(...params) {
+            const r = await pgPool.query(text, [tbl]);
+            return { changes: r.rowCount, lastInsertRowid: null };
+          },
+        };
+      }
+      // sqlite
+      const stmt = sqliteDb.prepare(sql);
+      return {
+        async all(...params) { return stmt.all(...toParams(params)); },
+        async get(...params) { return stmt.get(...toParams(params)); },
+        async run(...params) { return stmt.run(...toParams(params)); },
+      };
+    }
+
+    if (USE_POSTGRES) {
+      const text = translateSql(sql);
+      return {
+        async all(...params) {
+          const r = await pgPool.query(text, toParams(params));
+          return r.rows;
+        },
+        async get(...params) {
+          const r = await pgPool.query(text, toParams(params));
+          return r.rows[0];
+        },
+        async run(...params) {
+          const r = await pgPool.query(text, toParams(params));
+          return { changes: r.rowCount, lastInsertRowid: null };
+        },
+      };
+    }
+    const stmt = sqliteDb.prepare(sql);
+    return {
+      async all(...params) { return stmt.all(...toParams(params)); },
+      async get(...params) { return stmt.get(...toParams(params)); },
+      async run(...params) { return stmt.run(...toParams(params)); },
+    };
+  },
+  async exec(sql) {
+    if (USE_POSTGRES) {
+      const trimmed = sql.trim();
+      const noPragma = trimmed.split('\n').filter((l) => !/PRAGMA/i.test(l)).join('\n');
+      const stmts = noPragma.split(';').map((s) => s.trim()).filter(Boolean).map((s) => s + ';');
+      const toRun = stmts.length ? stmts : [noPragma.trim()];
+      for (const st of toRun) {
+        if (st) await pgPool.query(st);
+      }
+      return;
+    }
+    return sqliteDb.exec(sql);
+  },
+};
+
+export { db, USE_POSTGRES };
+
+await db.exec(`
 PRAGMA journal_mode = WAL;
 PRAGMA foreign_keys = ON;
 
@@ -66,7 +201,7 @@ CREATE TABLE IF NOT EXISTS content (
   release_date TEXT NOT NULL,
   release_notes TEXT NOT NULL DEFAULT '',
   installation TEXT NOT NULL DEFAULT '',
-  file_size INTEGER,
+  file_size REAL,
   sha256 TEXT,
   storage_reference TEXT,
   access_type TEXT NOT NULL DEFAULT 'public',
@@ -229,7 +364,7 @@ CREATE TABLE IF NOT EXISTS storage_objects (
   provider_file_id TEXT NOT NULL DEFAULT '',
   object_type TEXT NOT NULL DEFAULT 'package',
   file_name TEXT NOT NULL DEFAULT '',
-  file_size INTEGER,
+  file_size REAL,
   sha256 TEXT,
   availability_status TEXT NOT NULL DEFAULT 'available',
   last_verified_at TEXT,
@@ -240,7 +375,7 @@ CREATE TABLE IF NOT EXISTS content_versions (
   id TEXT PRIMARY KEY,
   content_id TEXT NOT NULL REFERENCES content(id) ON DELETE CASCADE,
   version TEXT NOT NULL,
-  file_size INTEGER,
+  file_size REAL,
   sha256 TEXT,
   storage_object_id TEXT REFERENCES storage_objects(id) ON DELETE SET NULL,
   changelog TEXT NOT NULL DEFAULT '',
@@ -368,6 +503,26 @@ CREATE TABLE IF NOT EXISTS security_events (
   created_at TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS invitation_codes (
+  id TEXT PRIMARY KEY,
+  code_hash TEXT NOT NULL UNIQUE,
+  created_by TEXT REFERENCES profiles(id) ON DELETE SET NULL,
+  intended_email TEXT,
+  max_uses INTEGER NOT NULL DEFAULT 1,
+  uses_count INTEGER NOT NULL DEFAULT 0,
+  expires_at TEXT,
+  revoked_at TEXT,
+  created_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS invitation_redemptions (
+  id TEXT PRIMARY KEY,
+  invitation_code_id TEXT NOT NULL REFERENCES invitation_codes(id) ON DELETE CASCADE,
+  user_id TEXT NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+  redeemed_at TEXT NOT NULL,
+  UNIQUE(invitation_code_id, user_id)
+);
+
 CREATE INDEX IF NOT EXISTS idx_visitor_sessions_ip ON visitor_sessions(ip_address);
 CREATE INDEX IF NOT EXISTS idx_visitor_sessions_last ON visitor_sessions(last_seen_at);
 CREATE INDEX IF NOT EXISTS idx_visitor_sessions_country ON visitor_sessions(country);
@@ -388,6 +543,9 @@ CREATE INDEX IF NOT EXISTS idx_storage_objects_provider ON storage_objects(provi
 CREATE INDEX IF NOT EXISTS idx_security_events_user ON security_events(user_id);
 CREATE INDEX IF NOT EXISTS idx_security_events_type ON security_events(event_type);
 CREATE INDEX IF NOT EXISTS idx_security_events_created ON security_events(created_at);
+
+CREATE INDEX IF NOT EXISTS idx_invitation_codes_hash ON invitation_codes(code_hash);
+CREATE INDEX IF NOT EXISTS idx_invitation_redemptions_code ON invitation_redemptions(invitation_code_id);
 
 CREATE INDEX IF NOT EXISTS idx_content_slug ON content(slug);
 CREATE INDEX IF NOT EXISTS idx_content_category ON content(category_id);
@@ -570,17 +728,17 @@ const CREATOR_SEED = [
   ['k3', 'Mumbai Rail Collective', '@mumbairail', 'RailWorks', 'Suburban operations', 'Mumbai Suburban', '#101522', '#1e2f52', '#c62b30', 0],
 ];
 
-function seedIfEmpty() {
-  const categoryCount = db.prepare('SELECT COUNT(*) AS n FROM categories').get().n;
+async function seedIfEmpty() {
+  const categoryCount = (await (db.prepare('SELECT COUNT(*) AS n FROM categories')).get()).n;
   if (categoryCount > 0) return false;
 
   const now = nowIso();
 
   for (const [id, name, slug, description] of CATEGORY_SEED) {
-    db.prepare('INSERT INTO categories (id, name, slug, description) VALUES (?, ?, ?, ?)').run(id, name, slug, description);
+    (await db.prepare('INSERT INTO categories (id, name, slug, description) VALUES (?, ?, ?, ?)').run(id, name, slug, description));
   }
 
-  const insertContent = db.prepare(`
+  const insertContent = await db.prepare(`
     INSERT INTO content (
       id, title, slug, short_description, description, category_id, category_label,
       simulator_type, package_type, author_name, art_from, art_to, art_accent, gallery_json,
@@ -600,7 +758,7 @@ function seedIfEmpty() {
       sha256 = crypto.createHash('sha256').update(bytes).digest('hex');
       file = `demo:${c.slug}.zip`;
     }
-    insertContent.run(
+    await insertContent.run(
       c.id, c.title, c.slug, c.short, c.description, c.category, c.categoryLabel,
       c.simulator, c.packageType, c.author, c.art[0], c.art[1], c.art[2],
       JSON.stringify(c.gallery.map(([from, to, accent]) => ({ from, to, accent }))),
@@ -609,40 +767,41 @@ function seedIfEmpty() {
     );
   }
 
-  const insertCollection = db.prepare('INSERT INTO collections (id, title, slug, description, art_from, art_to, art_accent, is_published) VALUES (?, ?, ?, ?, ?, ?, ?, 1)');
-  const insertItem = db.prepare('INSERT INTO collection_items (collection_id, content_id, display_order) VALUES (?, ?, ?)');
+  const insertCollection = await db.prepare('INSERT INTO collections (id, title, slug, description, art_from, art_to, art_accent, is_published) VALUES (?, ?, ?, ?, ?, ?, ?, 1)');
+  const insertItem = await db.prepare('INSERT INTO collection_items (collection_id, content_id, display_order) VALUES (?, ?, ?)');
   for (const col of COLLECTION_SEED) {
-    insertCollection.run(col.id, col.title, col.slug, col.description, col.art[0], col.art[1], col.art[2]);
-    col.items.forEach((slug, index) => {
-      const row = db.prepare('SELECT id FROM content WHERE slug = ?').get(slug);
-      if (row) insertItem.run(col.id, row.id, index);
-    });
+    await insertCollection.run(col.id, col.title, col.slug, col.description, col.art[0], col.art[1], col.art[2]);
+    for (const slug of col.items) {
+      const index = col.items.indexOf(slug);
+      const row = await (db.prepare('SELECT id FROM content WHERE slug = ?')).get(slug);
+      if (row) await insertItem.run(col.id, row.id, index);
+    }
   }
 
-  const insertCreator = db.prepare('INSERT INTO community_creators (id, name, handle, simulator, focus, project_title, art_from, art_to, art_accent, likes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-  for (const c of CREATOR_SEED) insertCreator.run(...c);
+  const insertCreator = await db.prepare('INSERT INTO community_creators (id, name, handle, simulator, focus, project_title, art_from, art_to, art_accent, likes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+  for (const c of CREATOR_SEED) await insertCreator.run(...c);
 
-  db.prepare('INSERT INTO announcements (id, title, description, kind, is_published, published_at, created_at) VALUES (?, ?, ?, ?, 1, ?, ?)').run(
+  (await db.prepare('INSERT INTO announcements (id, title, description, kind, is_published, published_at, created_at) VALUES (?, ?, ?, ?, 1, ?, ?)').run(
     'a1', 'Shatabdi Express Released', 'The Shatabdi Express is now available for RailWorks and Train Simulator Classic.', 'release', '2026-09-30', now,
-  );
-  db.prepare('INSERT INTO announcements (id, title, description, kind, is_published, published_at, created_at) VALUES (?, ?, ?, ?, 1, ?, ?)').run(
+  ));
+  (await db.prepare('INSERT INTO announcements (id, title, description, kind, is_published, published_at, created_at) VALUES (?, ?, ?, ?, 1, ?, ?)').run(
     'a2', 'Community Workshop Submissions Open', 'We opened the community gallery for screenshot submissions this month.', 'community', '2026-09-18', now,
-  );
-  db.prepare('INSERT INTO announcements (id, title, description, kind, is_published, published_at, created_at) VALUES (?, ?, ?, ?, 1, ?, ?)').run(
+  ));
+  (await db.prepare('INSERT INTO announcements (id, title, description, kind, is_published, published_at, created_at) VALUES (?, ?, ?, ?, 1, ?, ?)').run(
     'a3', 'Supporter Tokens Available', 'Supporter tokens are now issued directly by the LittleKrishna team. Redeem yours in the Supporter Zone.', 'supporter', '2026-10-02', now,
-  );
+  ));
 
-  db.prepare('INSERT INTO community_submissions (id, user_id, title, description, media_url, moderation_status, created_at) VALUES (?, NULL, ?, ?, NULL, ?, ?)').run(
+  (await db.prepare('INSERT INTO community_submissions (id, user_id, title, description, media_url, moderation_status, created_at) VALUES (?, NULL, ?, ?, NULL, ?, ?)').run(
     's1', 'Rain over Howrah Yard', 'Monsoon operations captured at Howrah.', 'approved', now,
-  );
-  db.prepare('INSERT INTO community_submissions (id, user_id, title, description, media_url, moderation_status, created_at) VALUES (?, NULL, ?, ?, NULL, ?, ?)').run(
+  ));
+  (await db.prepare('INSERT INTO community_submissions (id, user_id, title, description, media_url, moderation_status, created_at) VALUES (?, NULL, ?, ?, NULL, ?, ?)').run(
     's2', 'Monsoon Crossing', 'A crossing in the Western Ghats.', 'approved', now,
-  );
+  ));
 
   return true;
 }
 
-function seedAdmin() {
+async function seedAdmin() {
   const roleNames = [
     ['role_super', 'super_admin', 'Full administrative permissions.'],
     ['role_content', 'content_manager', 'Manage content, galleries and announcements.'],
@@ -651,10 +810,10 @@ function seedAdmin() {
     ['role_security', 'security_admin', 'Investigate security events and manage IP blocks.'],
   ];
   for (const [id, name, description] of roleNames) {
-    db.prepare('INSERT OR IGNORE INTO roles (id, name, description) VALUES (?, ?, ?)').run(id, name, description);
+    (await db.prepare('INSERT OR IGNORE INTO roles (id, name, description) VALUES (?, ?, ?)').run(id, name, description));
   }
 
-  const existingAdmin = db.prepare(`
+  const existingAdmin = await db.prepare(`
     SELECT p.* FROM profiles p
     JOIN user_roles ur ON ur.user_id = p.id
     JOIN roles r ON r.id = ur.role_id
@@ -670,17 +829,17 @@ function seedAdmin() {
   const now = nowIso();
   const id = uuid();
 
-  db.prepare('INSERT INTO profiles (id, username, display_name, email, password_hash, avatar_color, account_status, created_at, last_active_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)').run(
+  (await db.prepare('INSERT INTO profiles (id, username, display_name, email, password_hash, avatar_color, account_status, created_at, last_active_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)').run(
     id, 'admin', 'LittleKrishna Admin', email.toLowerCase(), hashPassword(password), '#c62b30', 'active', now, now,
-  );
-  db.prepare('INSERT INTO user_roles (user_id, role_id, created_at) VALUES (?, ?, ?)').run(id, 'role_super', now);
+  ));
+  (await db.prepare('INSERT INTO user_roles (user_id, role_id, created_at) VALUES (?, ?, ?)').run(id, 'role_super', now));
 
   const token = randomToken('lk_supporter');
   const tokenId = uuid();
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
-  db.prepare('INSERT INTO supporter_tokens (id, token_hash, created_by, expires_at, maximum_uses, redemption_count, created_at) VALUES (?, ?, ?, ?, 25, 0, ?)').run(
+  (await db.prepare('INSERT INTO supporter_tokens (id, token_hash, created_by, expires_at, maximum_uses, redemption_count, created_at) VALUES (?, ?, ?, ?, 25, 0, ?)').run(
     tokenId, hashToken(token), id, expiresAt, now,
-  );
+  ));
 
   const credentialFile = path.join(DATA_DIR, 'admin-credentials.txt');
   fs.writeFileSync(
@@ -700,9 +859,9 @@ function seedAdmin() {
     { mode: 0o600 },
   );
 
-  db.prepare('INSERT INTO audit_logs (id, actor_user_id, action, target_type, target_id, metadata, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)').run(
+  (await db.prepare('INSERT INTO audit_logs (id, actor_user_id, action, target_type, target_id, metadata, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)').run(
     uuid(), id, 'system.seed', 'platform', null, JSON.stringify({ adminEmail: email }), now,
-  );
+  ));
 
   console.log('\n[LittleKrishna] Local admin created:');
   console.log(`  Email:    ${email}`);
@@ -713,5 +872,24 @@ function seedAdmin() {
   return { email, password, token };
 }
 
-export const firstRun = seedIfEmpty();
-export const adminCredentials = seedAdmin();
+async function seedDemoInvitation() {
+  const count = (await db.prepare('SELECT COUNT(*) AS n FROM invitation_codes').get()).n;
+  if (count > 0) return null;
+  const code = randomToken('lk_invite').replace('lk_invite_', 'LK-');
+  const id = uuid();
+  const now = nowIso();
+  const expiresAt = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString();
+  await db.prepare('INSERT INTO invitation_codes (id, code_hash, created_by, intended_email, max_uses, uses_count, expires_at, revoked_at, created_at) VALUES (?, ?, NULL, NULL, ?, 0, ?, NULL, ?)')
+    .run(id, hashToken(code), 1000, expiresAt, now);
+  // append to credentials file if it exists
+  const credFile = path.join(DATA_DIR, 'admin-credentials.txt');
+  if (fs.existsSync(credFile)) {
+    fs.appendFileSync(credFile, `\nDemo invitation code (365 days, 1000 uses): ${code}\nInvitation code expires: ${expiresAt}\n`);
+  }
+  console.log(`\n[LittleKrishna] Demo invitation code: ${code}\n`);
+  return code;
+}
+
+export const firstRun = await seedIfEmpty();
+export const adminCredentials = await seedAdmin();
+export const demoInvitationCode = await seedDemoInvitation();

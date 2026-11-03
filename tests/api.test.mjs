@@ -38,10 +38,12 @@ function cookieFrom(res) {
 const credFile = fs.readFileSync(path.resolve('backend/data/admin-credentials.txt'), 'utf8');
 const adminEmail = /Admin email:\s*(\S+)/.exec(credFile)?.[1];
 const adminPassword = /Admin password:\s*(\S+)/.exec(credFile)?.[1];
+const invitationMatches = [...credFile.matchAll(/Demo invitation code[^:]*:\s*(\S+)/g)];
+const invitationCode = invitationMatches.length ? invitationMatches[invitationMatches.length - 1][1] : null;
 assert.ok(adminEmail && adminPassword, 'local admin credentials were not found');
 
-const userA = { username: `test_a_${unique}`, email: `test_a_${unique}@example.com`, password: 'password1234' };
-const userB = { username: `test_b_${unique}`, email: `test_b_${unique}@example.com`, password: 'password1234' };
+const userA = { username: `test_a_${unique}`, email: `test_a_${unique}@example.com`, password: 'password1234', invitationCode };
+const userB = { username: `test_b_${unique}`, email: `test_b_${unique}@example.com`, password: 'password1234', invitationCode };
 
 // 1. Health and public data
 let res = await call('GET', '/health');
