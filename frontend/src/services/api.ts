@@ -10,7 +10,26 @@ export class ApiError extends Error {
   }
 }
 
-const BASE_URL = import.meta.env.VITE_API_URL ?? '/api/v1';
+const DEV_API_URL = '/api/v1';
+const PRODUCTION_API_URL = 'https://little-krishna-2-bwx1.onrender.com/api/v1';
+
+/**
+ * API base URL resolution.
+ * - Dev: the relative `/api/v1` path rides the Vite dev proxy to the backend.
+ * - Production (AWS Amplify): the browser must call the Render service
+ *   directly. When `VITE_API_URL` is configured in the Amplify build
+ *   environment as an absolute http(s) URL it wins; otherwise we fall back
+ *   to the deployed Render endpoint so a missing or relative value can
+ *   never 404 against the Amplify origin again.
+ * This is a public, browser-facing URL only — no backend secrets belong
+ * in frontend environment variables.
+ */
+const configured = (import.meta.env.VITE_API_URL ?? '').trim();
+const BASE_URL = import.meta.env.PROD
+  ? /^https?:\/\//i.test(configured)
+    ? configured
+    : PRODUCTION_API_URL
+  : configured || DEV_API_URL;
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   let res: Response;
