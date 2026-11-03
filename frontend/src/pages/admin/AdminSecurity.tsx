@@ -36,7 +36,7 @@ interface IpRule { id: string; ip: string; ruleType: string; scope: string; reas
 type Tab = 'overview' | 'visitors' | 'alerts' | 'ip' | 'settings';
 
 const SEV_COLOR: Record<string, string> = {
-  critical: '#ff4d4d', high: '#ff6b00', medium: '#d2ff00', low: '#b2c73a', info: '#8b9198',
+  critical: '#c03b3b', high: '#c25a00', medium: '#6f7a0a', low: '#77811f', info: '#777970',
 };
 
 function Kpi({ label, value, icon: Icon, accent }: { label: string; value: number | string; icon: any; accent?: string }) {
@@ -225,7 +225,7 @@ export function AdminSecurity() {
               <Kpi label="Visitors 30d" value={dashboard.visitors30d} icon={Globe} />
               <Kpi label="Failed Logins (24h)" value={dashboard.failedLogins} icon={ShieldAlert} accent="#ff6b00" />
               <Kpi label="Blocked IPs" value={dashboard.blockedIps} icon={Ban} accent="#ff4d4d" />
-              <Kpi label="Open Alerts" value={dashboard.openAlerts} icon={AlertTriangle} accent="#d2ff00" />
+              <Kpi label="Open Alerts" value={dashboard.openAlerts} icon={AlertTriangle} accent="#d7ff00" />
             </div>
 
             <div className="grid grid--2">
@@ -394,7 +394,7 @@ export function AdminSecurity() {
                 {ipRules.map((r) => (
                   <tr key={r.id} style={{ borderBottom: '1px solid var(--line)' }}>
                     <td style={{ padding: 10, fontFamily: 'var(--font-mono)', fontSize: 11 }}>{r.ip}</td>
-                    <td style={{ padding: 10, color: r.ruleType === 'block' ? '#ff4d4d' : '#b2c73a', fontWeight: 700 }}>{r.ruleType.toUpperCase()}</td>
+                    <td style={{ padding: 10, color: r.ruleType === 'block' ? '#c03b3b' : '#2e6446', fontWeight: 700 }}>{r.ruleType.toUpperCase()}</td>
                     <td style={{ padding: 10 }}>{r.scope}</td>
                     <td style={{ padding: 10, color: 'var(--ink-on-dark)' }}>{r.reason || '—'}</td>
                     <td style={{ padding: 10 }}>{r.expiresAt ? new Date(r.expiresAt).toLocaleString() : 'Never'}</td>
@@ -478,3 +478,4 @@ export function AdminSecurity() {
     </div>
   );
 }
+

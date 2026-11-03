@@ -37,7 +37,7 @@ export function BrandStory() {
   }, []);
 
   return (
-    <section className="section" ref={ref}>
+    <section className="section section--paper" ref={ref}>
       <div className="container">
         <div
           style={{

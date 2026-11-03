@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 const LINKS = [
@@ -20,6 +20,12 @@ export function Navbar() {
   const [open, setOpen] = useState(false);
   const { user, status, signOut } = useAuth();
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+
+  // Routine use: pages whose top of page is a dark surface (home hero,
+  // content detail covers, or the open mobile menu) need light nav text.
+  const darkTop = pathname === '/' || pathname.startsWith('/content/');
+  const overDark = open || (!scrolled && darkTop);
   const isAdmin = Boolean(user?.roles.some((role) => ADMIN_ROLES.includes(role)));
 
   useEffect(() => {
@@ -29,6 +35,17 @@ export function Navbar() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false);
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [open]);
+
+  const linkDelay = (i: number) => (open ? `${90 + i * 42}ms` : '0ms');
+
   const doSignOut = async () => {
     setOpen(false);
     await signOut();
@@ -37,7 +54,7 @@ export function Navbar() {
 
   return (
     <>
-      <header className={`nav ${scrolled ? 'nav--scrolled' : ''}`}>
+      <header className={`nav ${scrolled ? 'nav--scrolled' : ''} ${overDark ? 'nav--over-dark' : ''} ${open ? 'nav--open' : ''}`}>
         <div className="container nav__inner">
           <Link to="/" className="nav__logo" onClick={() => setOpen(false)}>
             <span className="nav__logo-mark">L</span>
@@ -47,9 +64,9 @@ export function Navbar() {
             <ul className="nav__links">
               {LINKS.map((l) => (
                 <li key={l.to}>
-                  <Link className="nav__link" to={l.to}>
+                  <NavLink className={({ isActive }) => `nav__link ${isActive ? 'nav__link--active' : ''}`} to={l.to}>
                     <span className="roll"><span>{l.label}</span></span>
-                  </Link>
+                  </NavLink>
                 </li>
               ))}
             </ul>
@@ -68,37 +85,33 @@ export function Navbar() {
               </>
             )}
             <button className="nav__burger" aria-label="Toggle navigation" aria-expanded={open} onClick={() => setOpen((v) => !v)}>
-              <span style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
-                <span style={{ width: 18, height: 2, background: 'currentColor' }} />
-                <span style={{ width: 18, height: 2, background: 'currentColor' }} />
-                <span style={{ width: 18, height: 2, background: 'currentColor' }} />
-              </span>
+              <span className="nav__burger-bar" />
+              <span className="nav__burger-bar" />
+              <span className="nav__burger-bar" />
             </button>
           </div>
         </div>
       </header>
-      {open ? (
-        <div className="nav__mobile">
-          {LINKS.map((l) => (
-            <Link key={l.to} to={l.to} onClick={() => setOpen(false)}>
-              {l.label}
-            </Link>
-          ))}
-          {user ? (
-            <>
-              <Link to="/profile" onClick={() => setOpen(false)}>Profile</Link>
-              <Link to="/downloads" onClick={() => setOpen(false)}>Downloads</Link>
-              {isAdmin ? <Link to="/admin" onClick={() => setOpen(false)}>Admin Console</Link> : null}
-              <button className="btn btn--primary" onClick={() => void doSignOut()}>Sign Out</button>
-            </>
-          ) : (
-            <>
-              <Link to="/login" onClick={() => setOpen(false)}>Sign In</Link>
-              <Link className="btn btn--primary" to="/register" onClick={() => setOpen(false)}>Join The Community</Link>
-            </>
-          )}
-        </div>
-      ) : null}
+      <div className={`nav__mobile ${open ? 'is-open' : ''}`} inert={!open} aria-hidden={!open}>
+        {LINKS.map((l, i) => (
+          <Link key={l.to} to={l.to} onClick={() => setOpen(false)} style={{ transitionDelay: linkDelay(i) }}>
+            {l.label}
+          </Link>
+        ))}
+        {user ? (
+          <>
+            <Link to="/profile" onClick={() => setOpen(false)} style={{ transitionDelay: linkDelay(LINKS.length) }}>Profile</Link>
+            <Link to="/downloads" onClick={() => setOpen(false)} style={{ transitionDelay: linkDelay(LINKS.length + 1) }}>Downloads</Link>
+            {isAdmin ? <Link to="/admin" onClick={() => setOpen(false)} style={{ transitionDelay: linkDelay(LINKS.length + 2) }}>Admin Console</Link> : null}
+            <button className="btn btn--primary" onClick={() => void doSignOut()}>Sign Out</button>
+          </>
+        ) : (
+          <>
+            <Link to="/login" onClick={() => setOpen(false)} style={{ transitionDelay: linkDelay(LINKS.length) }}>Sign In</Link>
+            <Link className="btn btn--primary" to="/register" onClick={() => setOpen(false)} style={{ transitionDelay: linkDelay(LINKS.length + 1) }}>Join The Community</Link>
+          </>
+        )}
+      </div>
     </>
   );
 }

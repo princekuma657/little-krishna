@@ -8,7 +8,7 @@ export function Gallery() {
 
   return (
     <>
-      <section className="page-head">
+      <section className="page-head page-head--paper">
         <div className="container">
           <div className="crumbs">
             <Link to="/">Home</Link>
@@ -22,7 +22,7 @@ export function Gallery() {
           </p>
         </div>
       </section>
-      <section className="section" style={{ paddingTop: 0 }}>
+      <section className="section gallery-page" style={{ paddingTop: 0 }}>
         <div className="container">
           {galleryItems.length === 0 ? (
             <StateBlock title="Gallery empty" body="New gallery submissions will appear here." />

@@ -54,10 +54,11 @@ export function ContentCard({ item }: { item: ContentItem }) {
           style={{
             aspectRatio: '16 / 10',
             background: item.coverImageUrl
-              ? `url(${item.coverImageUrl}) center/cover no-repeat, linear-gradient(140deg, ${item.art.from} 0%, ${item.art.to} 100%)`
+              ? 'var(--midnight)'
               : `linear-gradient(140deg, ${item.art.from} 0%, ${item.art.to} 100%)`,
           }}
         >
+          {item.coverImageUrl ? <div className="media__img" style={{ backgroundImage: `url(${item.coverImageUrl})` }} /> : null}
           {item.art.accent && !item.coverImageUrl ? <div style={{ position: 'absolute', inset: 0, background: item.art.accent, opacity: 0.14 }} /> : null}
           <div className="media__label">{item.categoryLabel}</div>
         </div>

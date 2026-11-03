@@ -63,7 +63,7 @@ export function ContentDetail() {
     <article className="detail">
       <div className="detail__cover">
         <div className="container">
-          <div style={{ position: 'relative', zIndex: 2, width: '100%', paddingBottom: 60, background: 'linear-gradient(180deg, transparent, rgba(8,10,12,0.85))' }}>
+          <div style={{ position: 'relative', zIndex: 2, width: '100%', paddingBottom: 60, background: 'linear-gradient(180deg, transparent, rgba(17,17,18,0.85))' }}>
             <div className="crumbs" style={{ marginBottom: 20 }}>
               <Link to="/">Home</Link>
               <span>/</span>

@@ -4,7 +4,7 @@ import { ArrowUpRight } from 'lucide-react';
 export function TheRailways() {
   return (
     <>
-      <section className="page-head">
+      <section className="page-head page-head--paper">
         <div className="container">
           <div className="crumbs">
             <Link to="/">Home</Link>

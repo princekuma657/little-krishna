@@ -8,7 +8,7 @@ export function Releases() {
 
   return (
     <>
-      <section className="page-head">
+      <section className="page-head page-head--paper">
         <div className="container">
           <div className="crumbs">
             <Link to="/">Home</Link>
@@ -27,7 +27,7 @@ export function Releases() {
           {releases.length === 0 ? (
             <StateBlock title="No releases" body="Check back soon." />
           ) : (
-            <div className="grid grid--2">
+            <div className="grid grid--2 mosaic">
               {releases.map((r) => (
                 <Link className="card" to={`/content/${r.slug}`} key={r.id}>
                   <div className="card__media">

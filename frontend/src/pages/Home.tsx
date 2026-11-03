@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { CinematicIntro } from '../components/CinematicIntro';
+import { HomeMarquee } from '../sections/home/Marquee';
 import { Hero } from '../sections/home/Hero';
 import { BrandStory } from '../sections/home/BrandStory';
 import { OnTheTracks } from '../sections/home/OnTheTracks';
@@ -22,6 +23,7 @@ export function Home() {
       {showIntro ? <CinematicIntro onDone={handleIntroDone} /> : null}
       <Hero />
       <BrandStory />
+      <HomeMarquee />
       <OnTheTracks />
       <BeyondTheTracks />
       <Showcase />

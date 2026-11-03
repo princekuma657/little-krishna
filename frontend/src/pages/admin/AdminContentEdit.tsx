@@ -45,7 +45,7 @@ function formFromItem(item: ContentItem): FormState {
     releaseNotes: item.releaseNotes,
     artFrom: item.art.from,
     artTo: item.art.to,
-    artAccent: item.art.accent || '#b2c73a',
+    artAccent: item.art.accent || '#b8cf2f',
     isPublished: item.status === 'published',
     isFeatured: item.featured,
   };
@@ -205,3 +205,4 @@ export function AdminContentEdit() {
     </section>
   );
 }
+

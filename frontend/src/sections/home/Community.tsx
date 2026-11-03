@@ -27,7 +27,7 @@ export function Community() {
   }, []);
 
   return (
-    <section className="section section--alt" ref={ref}>
+    <section className="section section--paper" ref={ref}>
       <div className="container">
         <div className="section-head">
           <span className="eyebrow">Community</span>

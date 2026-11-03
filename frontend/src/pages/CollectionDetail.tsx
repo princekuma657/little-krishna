@@ -22,7 +22,7 @@ export function CollectionDetail() {
 
   return (
     <>
-      <section className="page-head">
+      <section className="page-head page-head--paper">
         <div className="container">
           <div className="crumbs">
             <Link to="/">Home</Link>
@@ -38,7 +38,7 @@ export function CollectionDetail() {
       </section>
       <section className="section" style={{ paddingTop: 0 }}>
         <div className="container">
-          <div className="grid grid--3">
+          <div className="grid grid--3 mosaic">
             {items.map((c) => (
               <Link className="card" to={`/content/${c.slug}`} key={c.id}>
                 <div className="card__media">

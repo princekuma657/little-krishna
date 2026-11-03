@@ -53,7 +53,7 @@ export function Hero() {
         >
           {import.meta.env.VITE_VIDEO_HERO ? <source src={import.meta.env.VITE_VIDEO_HERO} type="video/mp4" /> : null}
         </video>
-        <div className="hero__art" style={{ background: 'linear-gradient(180deg, #31342a 0%, #262a1e 55%, #282c20 100%)' }} />
+        <div className="hero__art" style={{ background: 'linear-gradient(180deg, #262a20 0%, #1e2018 55%, #171914 100%)' }} />
         <div className="hero__veil" />
       </div>
       <div className="container hero__content">

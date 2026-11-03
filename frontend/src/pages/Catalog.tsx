@@ -26,7 +26,7 @@ export function Catalog({ kind }: { kind: string }) {
 
   return (
     <>
-      <section className="page-head">
+      <section className="page-head page-head--paper">
         <div className="container">
           <div className="crumbs">
             <Link to="/">Home</Link>
@@ -50,7 +50,7 @@ export function Catalog({ kind }: { kind: string }) {
           {items.length === 0 ? (
             <StateBlock title="No content found" body="Try a different simulator filter." />
           ) : (
-            <div className="grid grid--3">
+            <div className="grid grid--3 mosaic">
               {items.map((c) => (
                 <ContentCard key={c.id} item={c} />
               ))}

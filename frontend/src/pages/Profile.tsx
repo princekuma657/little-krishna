@@ -45,7 +45,7 @@ export function Profile() {
   const [loading, setLoading] = useState(false);
   const [displayName, setDisplayName] = useState(user?.displayName ?? '');
   const [username, setUsername] = useState(user?.username ?? '');
-  const [avatarColor, setAvatarColor] = useState(user?.avatarColor ?? '#b2c73a');
+  const [avatarColor, setAvatarColor] = useState(user?.avatarColor ?? '#b8cf2f');
   const [settingsNotice, setSettingsNotice] = useState<string | null>(null);
   const [settingsError, setSettingsError] = useState<string | null>(null);
   const [currentPassword, setCurrentPassword] = useState('');
@@ -55,7 +55,7 @@ export function Profile() {
   useEffect(() => {
     setDisplayName(user?.displayName ?? '');
     setUsername(user?.username ?? '');
-    setAvatarColor(user?.avatarColor ?? '#b2c73a');
+    setAvatarColor(user?.avatarColor ?? '#b8cf2f');
   }, [user]);
 
   useEffect(() => {
@@ -219,7 +219,7 @@ export function Profile() {
               </div>
               <div style={{ display: 'grid', gap: 12 }}>
                 {notifications.map((n) => (
-                  <article key={n.id} className="info-panel" style={{ position: 'static', borderColor: n.isRead ? 'var(--line)' : 'rgba(198,165,106,0.45)' }}>
+                  <article key={n.id} className="info-panel" style={{ position: 'static', borderColor: n.isRead ? 'var(--line)' : 'rgba(184, 207, 47, 0.6)' }}>
                     <div style={{ display: 'flex', gap: 10, alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap' }}>
                       <h3 style={{ fontSize: 18 }}>{n.title}</h3>
                       <span className="badge">{n.isRead ? 'read' : 'new'}</span>
@@ -257,3 +257,4 @@ export function Profile() {
     </section>
   );
 }
+
