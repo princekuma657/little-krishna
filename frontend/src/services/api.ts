@@ -10,7 +10,7 @@ export class ApiError extends Error {
   }
 }
 
-const DEV_API_URL = '/api/v1';
+const DEV_API_URL = 'https://little-krishna-2-bwx1.onrender.com/api/v1';
 const PRODUCTION_API_URL = 'https://little-krishna-2-bwx1.onrender.com/api/v1';
 
 /**
@@ -40,7 +40,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
       credentials: 'include',
     });
   } catch {
-    throw new ApiError(0, 'network_error', 'Cannot reach the LittleKrishna API. Check your connection and try again.');
+    throw new ApiError(0, 'network_error', 'Cannot reach the LittleKrishna API at ' + BASE_URL + '. If you are running locally, start the backend with "npm run dev" from the repo root, or check that the Render backend is awake.');
   }
   const body = await res.json().catch(() => ({}));
   if (!res.ok) {
