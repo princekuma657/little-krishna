@@ -22,14 +22,14 @@ export function Login() {
     const ctx = gsap.context(() => {
       gsap.registerPlugin; // gsap imported for context
       const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
-      tl.fromTo('.auth-panel__eyebrow', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.8 }, 0)
-        .fromTo('.auth-panel__title', { opacity: 0, yPercent: 40 }, { opacity: 1, yPercent: 0, duration: 1.1 }, 0.1)
-        .fromTo('.auth-panel__sub', { opacity: 0, y: 26 }, { opacity: 1, y: 0, duration: 0.9 }, 0.35)
-        .fromTo('.auth-panel__perks li', { opacity: 0, x: -24 }, { opacity: 1, x: 0, duration: 0.7, stagger: 0.09 }, 0.5)
-        .fromTo('.auth-panel__wordmark', { opacity: 0 }, { opacity: 1, duration: 0.7 }, 0.6)
-        .fromTo('.auth-card', { opacity: 0, y: 60, rotate: 0.5 }, { opacity: 1, y: 0, rotate: 0, duration: 1 }, 0.3)
+      tl.fromTo('.auth-panel__eyebrow', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.8, immediateRender: false }, 0)
+        .fromTo('.auth-panel__title', { opacity: 0, yPercent: 40 }, { opacity: 1, yPercent: 0, duration: 1.1, immediateRender: false }, 0.1)
+        .fromTo('.auth-panel__sub', { opacity: 0, y: 26 }, { opacity: 1, y: 0, duration: 0.9, immediateRender: false }, 0.35)
+        .fromTo('.auth-panel__perks li', { opacity: 0, x: -24 }, { opacity: 1, x: 0, duration: 0.7, stagger: 0.09, immediateRender: false }, 0.5)
+        .fromTo('.auth-panel__wordmark', { opacity: 0 }, { opacity: 1, duration: 0.7, immediateRender: false }, 0.6)
+        .fromTo('.auth-card', { opacity: 0, y: 60, rotate: 0.5 }, { opacity: 1, y: 0, rotate: 0, duration: 1, immediateRender: false }, 0.3)
         .add(() => ref.current?.querySelector('.auth-card')?.classList.add('is-in'), 1.0)
-        .fromTo('.auth-card .field', { opacity: 0, y: 26 }, { opacity: 1, y: 0, duration: 0.7, stagger: 0.12 }, 0.75);
+        .fromTo('.auth-card .field', { opacity: 0, y: 26 }, { opacity: 1, y: 0, duration: 0.7, stagger: 0.12, immediateRender: false }, 0.75);
     }, ref);
     return () => ctx.revert();
   }, []);

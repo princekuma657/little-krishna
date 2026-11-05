@@ -1948,6 +1948,60 @@ table.table {
   margin-bottom: 12px;
 }
 
+/* ---------- Auth contrast (explicit, scoped — never inherit dark tokens) ---------- */
+.auth-pane {
+  background: #111111;
+  color: #f5f5f2;
+}
+
+.auth-card {
+  background: #f5f5f2;
+  color: #111111;
+  border-color: rgba(17, 17, 16, 0.16);
+}
+
+.auth-card h1,
+.auth-card .label,
+.auth-card .input,
+.auth-card .field .label {
+  color: #111111;
+}
+
+.auth-card .input {
+  background: rgba(17, 17, 16, 0.04);
+  border-color: rgba(17, 17, 16, 0.24);
+}
+
+.auth-card .input::placeholder {
+  color: rgba(17, 17, 16, 0.45);
+}
+
+.auth-card .input:focus {
+  background: rgba(17, 17, 16, 0.06);
+  border-color: #d7ff00;
+  box-shadow: 0 0 0 3px rgba(215, 255, 0, 0.12);
+}
+
+.auth-card .eyebrow {
+  color: #8a8a85;
+}
+
+.auth-card .auth-alt {
+  color: #63635f;
+}
+
+.auth-card .auth-alt a {
+  color: #49520a;
+}
+
+.auth-card .auth-alt a:hover {
+  color: #111111;
+}
+
+.auth-card .form-error {
+  color: #c2410c;
+}
+
 .auth-alt {
   margin-top: 24px;
   font-size: 14px;
