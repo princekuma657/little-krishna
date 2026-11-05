@@ -45,7 +45,7 @@ export function Profile() {
   const [loading, setLoading] = useState(false);
   const [displayName, setDisplayName] = useState(user?.displayName ?? '');
   const [username, setUsername] = useState(user?.username ?? '');
-  const [avatarColor, setAvatarColor] = useState(user?.avatarColor ?? '#b8cf2f');
+  const [avatarColor, setAvatarColor] = useState(user?.avatarColor ?? '#d7ff00');
   const [settingsNotice, setSettingsNotice] = useState<string | null>(null);
   const [settingsError, setSettingsError] = useState<string | null>(null);
   const [currentPassword, setCurrentPassword] = useState('');
@@ -55,7 +55,7 @@ export function Profile() {
   useEffect(() => {
     setDisplayName(user?.displayName ?? '');
     setUsername(user?.username ?? '');
-    setAvatarColor(user?.avatarColor ?? '#b8cf2f');
+    setAvatarColor(user?.avatarColor ?? '#d7ff00');
   }, [user]);
 
   useEffect(() => {

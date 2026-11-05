@@ -4,6 +4,7 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ArrowUpRight } from 'lucide-react';
 import { CREATORS } from '../../data/content';
+import { NEUTRAL_ART } from '../../components/Media';
 
 export function BeyondTheTracks() {
   const ref = useRef<HTMLElement>(null);
@@ -42,7 +43,7 @@ export function BeyondTheTracks() {
           {CREATORS.map((c) => (
             <article className="card creator-card" key={c.id}>
               <div className="card__media">
-                <div className="media" style={{ aspectRatio: '16 / 10', background: `linear-gradient(140deg, ${c.art.from}, ${c.art.to})` }}>
+                <div className="media" style={{ aspectRatio: '16 / 10', background: NEUTRAL_ART }}>
                   <div className="media__label">{c.projectTitle}</div>
                 </div>
               </div>

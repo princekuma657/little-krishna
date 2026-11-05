@@ -51,9 +51,9 @@ export function BrandStory() {
           <div className="story-media">
             <div
               className="media"
-              style={{ aspectRatio: '4 / 5', background: 'linear-gradient(150deg, #3d4232 0%, #262a1e 100%)' }}
+              style={{ aspectRatio: '4 / 5', background: 'linear-gradient(150deg, #2c2c2c 0%, #161616 100%)' }}
             >
-              <div style={{ position: 'absolute', inset: 0, background: 'rgba(210,255,0,0.12)' }} />
+              <div style={{ position: 'absolute', inset: 0, background: 'rgba(215,255,0,0.1)' }} />
               <div className="media__label">The Iron Road</div>
             </div>
           </div>

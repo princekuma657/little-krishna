@@ -1,6 +1,7 @@
 import { Link, useParams } from 'react-router-dom';
 import { COLLECTIONS, CONTENT } from '../data/content';
 import { StateBlock } from '../components/ui';
+import { NEUTRAL_ART } from '../components/Media';
 
 export function CollectionDetail() {
   const { slug } = useParams();
@@ -42,7 +43,7 @@ export function CollectionDetail() {
             {items.map((c) => (
               <Link className="card" to={`/content/${c.slug}`} key={c.id}>
                 <div className="card__media">
-                  <div className="media" style={{ aspectRatio: '16 / 10', background: `linear-gradient(140deg, ${c.art.from}, ${c.art.to})` }}>
+                  <div className="media" style={{ aspectRatio: '16 / 10', background: NEUTRAL_ART }}>
                     <div className="media__label">{c.title}</div>
                   </div>
                 </div>

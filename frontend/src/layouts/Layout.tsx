@@ -164,7 +164,7 @@ export function Layout() {
         Skip to content
       </a>
       <Navbar />
-      <main id="main">
+      <main id="main" className="page" key={pathname}>
         <Outlet />
       </main>
       <Footer />

@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import type { AccessType, ContentCollection, ContentItem } from '../types';
 import { Link } from 'react-router-dom';
+import { NEUTRAL_ART } from './Media';
 
 export function SectionHead({
   eyebrow,
@@ -55,11 +56,10 @@ export function ContentCard({ item }: { item: ContentItem }) {
             aspectRatio: '16 / 10',
             background: item.coverImageUrl
               ? 'var(--midnight)'
-              : `linear-gradient(140deg, ${item.art.from} 0%, ${item.art.to} 100%)`,
+              : NEUTRAL_ART,
           }}
         >
           {item.coverImageUrl ? <div className="media__img" style={{ backgroundImage: `url(${item.coverImageUrl})` }} /> : null}
-          {item.art.accent && !item.coverImageUrl ? <div style={{ position: 'absolute', inset: 0, background: item.art.accent, opacity: 0.14 }} /> : null}
           <div className="media__label">{item.categoryLabel}</div>
         </div>
       </div>
@@ -88,7 +88,7 @@ export function CollectionCard({ collection }: { collection: ContentCollection }
           className="media"
           style={{
             aspectRatio: '16 / 10',
-            background: `linear-gradient(140deg, ${collection.art.from} 0%, ${collection.art.to} 100%)`,
+            background: NEUTRAL_ART,
           }}
         >
           <div className="media__label">{collection.title}</div>

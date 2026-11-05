@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { COMMUNITY_SUBMISSIONS, CREATORS } from '../../data/content';
+import { NEUTRAL_ART } from '../../components/Media';
 
 export function Community() {
   const ref = useRef<HTMLElement>(null);
@@ -41,7 +42,7 @@ export function Community() {
           {CREATORS.map((c) => (
             <article className="card community-card" key={c.id}>
               <div className="card__media">
-                <div className="media" style={{ aspectRatio: '16 / 10', background: `linear-gradient(140deg, ${c.art.from}, ${c.art.to})` }}>
+                <div className="media" style={{ aspectRatio: '16 / 10', background: NEUTRAL_ART }}>
                   <div className="media__label">{c.projectTitle}</div>
                 </div>
               </div>
@@ -57,7 +58,7 @@ export function Community() {
           {COMMUNITY_SUBMISSIONS.map((s) => (
             <article className="card community-card" key={s.id}>
               <div className="card__media">
-                <div className="media" style={{ aspectRatio: '16 / 10', background: `linear-gradient(140deg, ${s.art.from}, ${s.art.to})` }}>
+                <div className="media" style={{ aspectRatio: '16 / 10', background: NEUTRAL_ART }}>
                   <div className="media__label">{s.title}</div>
                 </div>
               </div>

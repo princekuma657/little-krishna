@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { ArrowUpRight } from 'lucide-react';
 import { CONTENT } from '../data/content';
 import { Badge, StateBlock } from '../components/ui';
+import { NEUTRAL_ART } from '../components/Media';
 
 export function Releases() {
   const releases = [...CONTENT].filter((c) => c.status === 'published').sort((a, b) => b.releaseDate.localeCompare(a.releaseDate));
@@ -31,7 +32,7 @@ export function Releases() {
               {releases.map((r) => (
                 <Link className="card" to={`/content/${r.slug}`} key={r.id}>
                   <div className="card__media">
-                    <div className="media" style={{ aspectRatio: '16 / 10', background: `linear-gradient(140deg, ${r.art.from}, ${r.art.to})` }}>
+                    <div className="media" style={{ aspectRatio: '16 / 10', background: NEUTRAL_ART }}>
                       <div className="media__label">{r.title}</div>
                     </div>
                   </div>

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { CONTENT, fmtDate, SITE } from '../../data/content';
+import { NEUTRAL_ART } from '../../components/Media';
 
 export function FeaturedRelease() {
   const ref = useRef<HTMLElement>(null);
@@ -45,9 +46,8 @@ export function FeaturedRelease() {
           <div className="featured-media">
             <div
               className="media"
-              style={{ position: 'absolute', inset: 0, background: `linear-gradient(140deg, ${featured.art.from}, ${featured.art.to})` }}
+              style={{ position: 'absolute', inset: 0, background: NEUTRAL_ART }}
             >
-              <div style={{ position: 'absolute', inset: 0, background: featured.art.accent, opacity: 0.16 }} />
               <div className="media__label">{featured.title}</div>
             </div>
           </div>

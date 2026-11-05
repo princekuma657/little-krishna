@@ -36,7 +36,7 @@ interface IpRule { id: string; ip: string; ruleType: string; scope: string; reas
 type Tab = 'overview' | 'visitors' | 'alerts' | 'ip' | 'settings';
 
 const SEV_COLOR: Record<string, string> = {
-  critical: '#c03b3b', high: '#c25a00', medium: '#6f7a0a', low: '#77811f', info: '#777970',
+  critical: '#c03b3b', high: '#c25a00', medium: '#a16207', low: '#6b6b66', info: '#8a8a85',
 };
 
 function Kpi({ label, value, icon: Icon, accent }: { label: string; value: number | string; icon: any; accent?: string }) {

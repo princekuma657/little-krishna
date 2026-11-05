@@ -63,7 +63,7 @@ export function ContentDetail() {
     <article className="detail">
       <div className="detail__cover">
         <div className="container">
-          <div style={{ position: 'relative', zIndex: 2, width: '100%', paddingBottom: 60, background: 'linear-gradient(180deg, transparent, rgba(17,17,18,0.85))' }}>
+          <div style={{ position: 'relative', zIndex: 2, width: '100%', paddingBottom: 60, background: 'linear-gradient(180deg, transparent, rgba(8,8,8,0.85))' }}>
             <div className="crumbs" style={{ marginBottom: 20 }}>
               <Link to="/">Home</Link>
               <span>/</span>
@@ -74,8 +74,7 @@ export function ContentDetail() {
             <h1 className="detail__title">{item.title}</h1>
           </div>
         </div>
-        <div className="media" style={{ position: 'absolute', inset: 0, background: `linear-gradient(140deg, ${item.art.from}, ${item.art.to})` }}>
-          <div style={{ position: 'absolute', inset: 0, background: item.art.accent, opacity: 0.16 }} />
+        <div className="media" style={{ position: 'absolute', inset: 0, background: 'linear-gradient(140deg, #1c1c1c 0%, #101010 100%)' }}>
         </div>
       </div>
 
@@ -122,15 +121,14 @@ export function ContentDetail() {
             <div className="download-box__preview" style={{
               aspectRatio: '16 / 10',
               background: item.coverImageUrl
-                ? `url(${item.coverImageUrl}) center/cover no-repeat, linear-gradient(140deg, ${item.art.from}, ${item.art.to})`
-                : `linear-gradient(140deg, ${item.art.from}, ${item.art.to})`,
+                ? `url(${item.coverImageUrl}) center/cover no-repeat, #101010`
+                : 'linear-gradient(140deg, #1c1c1c 0%, #101010 100%)',
               borderRadius: 0,
               marginBottom: 14,
               position: 'relative',
               overflow: 'hidden',
               border: '1px solid var(--line)',
             }}>
-              <div style={{ position: 'absolute', inset: 0, background: item.art.accent, opacity: 0.14 }} />
               <div className="media__label" style={{ fontSize: 14 }}>{item.title}</div>
             </div>
             <h3>{requiresSupporter ? <><ShieldAlert size={18} style={{ verticalAlign: -4 }} /> Supporter Exclusive</> : 'Download'}</h3>

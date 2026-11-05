@@ -38,6 +38,7 @@ import { AdminSecurity } from './pages/admin/AdminSecurity';
 import { AdminSettings } from './pages/admin/AdminSettings';
 import { loadPublicData, loadPreviewData, STATE_MESSAGES } from './data/content';
 import { displayError } from './services/api';
+import { revealCanvas } from './components/CinematicIntro';
 
 type BootPhase = 'loading' | 'ready' | 'error';
 
@@ -67,6 +68,13 @@ export default function App() {
   useEffect(() => {
     void boot();
   }, [boot]);
+
+  // Once the boot screen hands over (ready or error), the black pre-paint
+  // canvas must be released so every route — with or without the intro —
+  // starts from the site's own light canvas.
+  useEffect(() => {
+    if (phase !== 'loading') revealCanvas();
+  }, [phase]);
 
   if (phase === 'loading') {
     return (

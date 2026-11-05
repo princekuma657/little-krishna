@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { ArrowUpRight } from 'lucide-react';
 import { CONTENT } from '../../data/content';
+import { NEUTRAL_ART } from '../../components/Media';
 
 export function Supporter() {
   const exclusive = CONTENT.filter((c) => c.accessType === 'supporter').slice(0, 3);
@@ -20,7 +21,7 @@ export function Supporter() {
           {exclusive.map((c) => (
             <Link className="card" to={`/content/${c.slug}`} key={c.id}>
               <div className="card__media">
-                <div className="media" style={{ aspectRatio: '16 / 10', background: `linear-gradient(140deg, ${c.art.from}, ${c.art.to})` }}>
+                <div className="media" style={{ aspectRatio: '16 / 10', background: NEUTRAL_ART }}>
                   <div className="media__label">{c.title}</div>
                 </div>
               </div>

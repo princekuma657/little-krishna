@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { CinematicIntro } from '../components/CinematicIntro';
+import { CinematicIntro, revealCanvas } from '../components/CinematicIntro';
 import { HomeMarquee } from '../sections/home/Marquee';
 import { Hero } from '../sections/home/Hero';
 import { BrandStory } from '../sections/home/BrandStory';
@@ -12,7 +12,12 @@ import { Community } from '../sections/home/Community';
 import { Supporter } from '../sections/home/Supporter';
 
 export function Home() {
-  const [showIntro] = useState(() => sessionStorage.getItem('littlekrishna.intro') !== 'done');
+  const [showIntro] = useState(() => {
+    const done = sessionStorage.getItem('littlekrishna.intro') === 'done';
+    // Intro skipped this session: hand the light canvas over immediately.
+    if (done) revealCanvas();
+    return !done;
+  });
 
   const handleIntroDone = () => {
     sessionStorage.setItem('littlekrishna.intro', 'done');

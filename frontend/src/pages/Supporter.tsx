@@ -4,6 +4,7 @@ import { CONTENT } from '../data/content';
 import { useAuth } from '../context/AuthContext';
 import { api, displayError } from '../services/api';
 import { StateBlock } from '../components/ui';
+import { NEUTRAL_ART } from '../components/Media';
 import { BadgeCheck, KeyRound, ShieldCheck } from 'lucide-react';
 
 interface RedeemResponse {
@@ -118,7 +119,7 @@ export function Supporter() {
                   return (
                     <Link className="card" to={`/content/${c.slug}`} key={c.id}>
                       <div className="card__media">
-                        <div className="media" style={{ aspectRatio: '16 / 10', background: `linear-gradient(140deg, ${c.art.from}, ${c.art.to})` }}>
+                        <div className="media" style={{ aspectRatio: '16 / 10', background: NEUTRAL_ART }}>
                           <div className="media__label">{c.title}</div>
                         </div>
                       </div>

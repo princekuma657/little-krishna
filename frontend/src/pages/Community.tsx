@@ -5,6 +5,7 @@ import { SectionHead, StateBlock } from '../components/ui';
 import { useAuth } from '../context/AuthContext';
 import { api, displayError } from '../services/api';
 import type { CommunitySubmission } from '../types';
+import { NEUTRAL_ART } from '../components/Media';
 
 export function Community() {
   const { user } = useAuth();
@@ -96,7 +97,7 @@ export function Community() {
               {CREATORS.map((c) => (
                 <article className="card" key={c.id}>
                   <div className="card__media">
-                    <div className="media" style={{ aspectRatio: '16 / 10', background: `linear-gradient(140deg, ${c.art.from}, ${c.art.to})` }}>
+                    <div className="media" style={{ aspectRatio: '16 / 10', background: NEUTRAL_ART }}>
                       <div className="media__label">{c.projectTitle}</div>
                     </div>
                   </div>
@@ -119,7 +120,7 @@ export function Community() {
                     {s.mediaUrl ? (
                       <img src={s.mediaUrl} alt={s.title} loading="lazy" style={{ width: '100%', aspectRatio: '16 / 10', objectFit: 'cover' }} />
                     ) : (
-                      <div className="media" style={{ aspectRatio: '16 / 10', background: `linear-gradient(140deg, ${s.art.from}, ${s.art.to})` }}>
+                      <div className="media" style={{ aspectRatio: '16 / 10', background: NEUTRAL_ART }}>
                         <div className="media__label">{s.title}</div>
                       </div>
                     )}
