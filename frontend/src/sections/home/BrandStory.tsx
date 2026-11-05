@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import brandPhoto from '../../assets/home/home-photo-1.jpg';
 
 export function BrandStory() {
   const ref = useRef<HTMLElement>(null);
@@ -51,7 +52,7 @@ export function BrandStory() {
           <div className="story-media">
             <div
               className="media"
-              style={{ aspectRatio: '4 / 5', background: 'linear-gradient(150deg, #2c2c2c 0%, #161616 100%)' }}
+              style={{ aspectRatio: '4 / 5', backgroundImage: `url(${brandPhoto})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
             >
               <div style={{ position: 'absolute', inset: 0, background: 'rgba(215,255,0,0.1)' }} />
               <div className="media__label">The Iron Road</div>

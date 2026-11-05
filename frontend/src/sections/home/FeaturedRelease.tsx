@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { CONTENT, fmtDate, SITE } from '../../data/content';
-import { NEUTRAL_ART } from '../../components/Media';
+import featuredPhoto from '../../assets/home/home-photo-9.jpeg';
 
 export function FeaturedRelease() {
   const ref = useRef<HTMLElement>(null);
@@ -46,7 +46,7 @@ export function FeaturedRelease() {
           <div className="featured-media">
             <div
               className="media"
-              style={{ position: 'absolute', inset: 0, background: NEUTRAL_ART }}
+              style={{ position: 'absolute', inset: 0, backgroundImage: `url(${featuredPhoto})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
             >
               <div className="media__label">{featured.title}</div>
             </div>

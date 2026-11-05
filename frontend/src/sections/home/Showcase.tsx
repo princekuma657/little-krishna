@@ -10,6 +10,10 @@ import wap7Station from '../../assets/showcase/wap7-station.jpg';
 import wdg4Sabarmati from '../../assets/showcase/wdg4-sabarmati.jpg';
 import icfFront from '../../assets/showcase/icf-memu-front.jpg';
 import freightCountryside from '../../assets/showcase/freight-countryside.jpg';
+import homePhoto8 from '../../assets/home/home-photo-8.jpeg';
+import homePhoto10 from '../../assets/home/home-photo-10.jpeg';
+import homePhoto11 from '../../assets/home/home-photo-11.jpeg';
+import homePhoto12 from '../../assets/home/home-photo-12.jpeg';
 
 const SHOTS = [
   {
@@ -53,6 +57,30 @@ const SHOTS = [
     cls: 'shot--g',
     label: 'WAP-7 · Under The Canopy',
     caption: 'All lines clear, arrival on schedule.',
+  },
+  {
+    src: homePhoto8,
+    cls: 'shot--h',
+    label: 'Field Capture · 01',
+    caption: 'A new frame from the workshop archives.',
+  },
+  {
+    src: homePhoto10,
+    cls: 'shot--i',
+    label: 'Field Capture · 02',
+    caption: 'Lines, light and steel.',
+  },
+  {
+    src: homePhoto11,
+    cls: 'shot--j',
+    label: 'Field Capture · 03',
+    caption: 'Motion frozen mid-route.',
+  },
+  {
+    src: homePhoto12,
+    cls: 'shot--k',
+    label: 'Field Capture · 04',
+    caption: 'The platform after departure.',
   },
 ];
 

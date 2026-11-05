@@ -876,6 +876,10 @@ button:hover > .roll > span {
 .shot--e { grid-column: span 4; }
 .shot--f { grid-column: span 4; }
 .shot--g { grid-column: span 12; height: clamp(210px, 32vw, 420px); }
+.shot--h { grid-column: span 4; }
+.shot--i { grid-column: span 4; }
+.shot--j { grid-column: span 4; }
+.shot--k { grid-column: span 12; height: clamp(210px, 32vw, 420px); }
 
 @media (max-width: 720px) {
   .shot-grid {
