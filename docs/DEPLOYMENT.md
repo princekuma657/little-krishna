@@ -30,7 +30,7 @@
   refused from any other origin by `backend/server.mjs`):
 
   ```
-  CORS_ORIGINS=https://<your-amplify-domain>.amplifyapp.com
+  CORS_ORIGINS=https://little-krishna.com,https://www.little-krishna.com
   ```
 
   Include every production origin that must call the API (add the primary
