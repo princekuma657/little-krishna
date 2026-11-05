@@ -25,11 +25,14 @@ const PRODUCTION_API_URL = 'https://little-krishna-2-bwx1.onrender.com/api/v1';
  * in frontend environment variables.
  */
 const configured = (import.meta.env.VITE_API_URL ?? '').trim();
+const isAbsolute = /^https?:\/\//i.test(configured);
 const BASE_URL = import.meta.env.PROD
-  ? /^https?:\/\//i.test(configured)
+  ? isAbsolute
     ? configured
     : PRODUCTION_API_URL
-  : configured || DEV_API_URL;
+  : isAbsolute
+    ? configured
+    : DEV_API_URL;
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   let res: Response;
