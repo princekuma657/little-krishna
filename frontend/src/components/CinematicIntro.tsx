@@ -50,49 +50,49 @@ export function CinematicIntro({ onDone }: { onDone: () => void }) {
       tl.fromTo(
         letters,
         { yPercent: 118 },
-        { yPercent: 0, duration: 1.15, stagger: 0.05 },
-        0.15,
+        { yPercent: 0, duration: 1.5, stagger: 0.07 },
+        0.2,
       )
         // 2 — accent rule sweeps open
         .fromTo(
           '.intro__rule',
           { scaleX: 0 },
-          { scaleX: 1, duration: 0.9, ease: 'power3.inOut' },
-          0.85,
+          { scaleX: 1, duration: 1.1, ease: 'power3.inOut' },
+          1.0,
         )
         // 3 — tagline and meta settle in
         .fromTo(
           '.intro__tagline',
           { opacity: 0, y: 12 },
-          { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' },
-          1.05,
+          { opacity: 1, y: 0, duration: 1.0, ease: 'power3.out' },
+          1.3,
         )
         .fromTo(
           '.intro__corner',
           { opacity: 0 },
-          { opacity: 1, duration: 0.7, stagger: 0.12, ease: 'power2.out' },
-          1.2,
+          { opacity: 1, duration: 0.9, stagger: 0.15, ease: 'power2.out' },
+          1.5,
         )
         // 4 — chrome fades up (skip button, bottom marquee)
-        .to('.intro__skip', { opacity: 1, duration: 0.55, ease: 'power2.out' }, 1.45)
-        .to('.intro__marquee', { opacity: 1, duration: 0.55, ease: 'power2.out' }, 1.35)
+        .to('.intro__skip', { opacity: 1, duration: 0.7, ease: 'power2.out' }, 1.8)
+        .to('.intro__marquee', { opacity: 1, duration: 0.7, ease: 'power2.out' }, 1.7)
         // 5 — hold the frame, brief and confident
-        .to({}, { duration: 0.5 }, '+=0.05')
+        .to({}, { duration: 0.8 }, '+=0.1')
         // 6 — outro: inner layer collapses, then the black iris closes
         .to(
           ['.intro__tagline', '.intro__rule', '.intro__mark'],
-          { opacity: 0, y: -16, duration: 0.5, ease: 'power3.in', stagger: 0.05 },
+          { opacity: 0, y: -16, duration: 0.6, ease: 'power3.in', stagger: 0.06 },
           '+=0',
         )
         .to(
           ['.intro__corner', '.intro__skip', '.intro__marquee'],
-          { opacity: 0, duration: 0.4, ease: 'power2.in' },
+          { opacity: 0, duration: 0.5, ease: 'power2.in' },
           '<',
         )
         .to(
           '.intro',
-          { clipPath: 'circle(0% at 50% 47%)', duration: 1.05, ease: 'power3.inOut' },
-          '-=0.15',
+          { clipPath: 'circle(0% at 50% 47%)', duration: 1.2, ease: 'power3.inOut' },
+          '-=0.2',
         );
 
       // Skip via Escape as well as the on-screen button.

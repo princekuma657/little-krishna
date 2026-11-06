@@ -21,25 +21,25 @@ export function Hero() {
       tl.fromTo(
         '.hero__kicker',
         { opacity: 0, y: 24 },
-        { opacity: 1, y: 0, duration: 0.9, delay: 0.15, immediateRender: false },
+        { opacity: 1, y: 0, duration: 1.2, delay: 0.2, immediateRender: false },
       )
         .fromTo(
           '.hero__title',
           { yPercent: 55, opacity: 0 },
-          { yPercent: 0, opacity: 1, duration: 1.5, ease: 'power4.out', immediateRender: false },
-          '-=0.4',
+          { yPercent: 0, opacity: 1, duration: 2.0, ease: 'power4.out', immediateRender: false },
+          '-=0.5',
         )
         .fromTo(
           '.hero__sub',
           { y: 40, opacity: 0 },
-          { y: 0, opacity: 1, duration: 1.1, ease: 'power3.out', immediateRender: false },
-          '-=0.5',
+          { y: 0, opacity: 1, duration: 1.4, ease: 'power3.out', immediateRender: false },
+          '-=0.6',
         )
         .fromTo(
           '.hero__cta > *',
           { y: 30, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.9, ease: 'power3.out', stagger: 0.12, immediateRender: false },
-          '-=0.7',
+          { y: 0, opacity: 1, duration: 1.2, ease: 'power3.out', stagger: 0.15, immediateRender: false },
+          '-=0.8',
         );
 
       let played = false;

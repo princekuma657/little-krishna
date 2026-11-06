@@ -195,7 +195,7 @@ export function AdminContentCreate() {
               <label className="label" htmlFor="cover-image">Cover image (pushed to Cloudinary)</label>
               <input id="cover-image" className="input" type="file" accept="image/*" onChange={(e) => void chooseCoverImage(e.target.files?.[0])} disabled={uploadingImage} />
               <p className="field-help">{uploadingImage ? 'Uploading to Cloudinary…' : 'Optional. Uploads to Cloudinary and stores the URL.'}</p>
-              {form.coverImageUrl ? <img src={form.coverImageUrl} alt="cover" style={{ marginTop: 8, maxWidth: '100%', maxHeight: 120, borderRadius: 4 }} /> : null}
+              {form.coverImageUrl ? <img src={form.coverImageUrl} alt="cover" loading="lazy" style={{ marginTop: 8, maxWidth: '100%', maxHeight: 120, borderRadius: 4 }} /> : null}
             </div>
             <div className="field">
               <label className="label" htmlFor="drive-link">Google Drive link / file ID (optional)</label>
