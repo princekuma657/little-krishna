@@ -27,8 +27,8 @@ export function ForgotPassword() {
   };
 
   return (
-    <section className="auth-wrap">
-      <div className="auth-card">
+    <section style={{ minHeight: '100vh', display: 'grid', placeItems: 'center', padding: 'calc(var(--nav-h) + 40px) 24px 40px', background: 'var(--midnight-2)' }}>
+      <div className="auth-card" style={{ maxWidth: 460, width: '100%' }}>
         <span className="eyebrow">Account</span>
         <h1>Reset Password</h1>
         <p style={{ color: 'var(--ink-on-dark)', fontSize: 14, marginBottom: 28 }}>
