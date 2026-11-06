@@ -4,12 +4,14 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { CONTENT, fmtDate, SITE } from '../../data/content';
 import featuredPhoto from '../../assets/home/home-photo-9.jpeg';
+import type { ContentItem } from '../../types';
 
 export function FeaturedRelease() {
   const ref = useRef<HTMLElement>(null);
-  const featured = CONTENT.find((c) => c.featured && c.status === 'published') ?? CONTENT[0];
+  const featured = (CONTENT.find((c) => c.featured && c.status === 'published') ?? CONTENT[0]) as ContentItem | undefined;
 
   useEffect(() => {
+    if (!featured) return;
     const ctx = gsap.context(() => {
       gsap.registerPlugin(ScrollTrigger);
       gsap.fromTo(
@@ -37,7 +39,9 @@ export function FeaturedRelease() {
       );
     }, ref);
     return () => ctx.revert();
-  }, [featured.slug]);
+  }, [featured?.slug]);
+
+  if (!featured) return null;
 
   return (
     <section className="section" ref={ref}>
