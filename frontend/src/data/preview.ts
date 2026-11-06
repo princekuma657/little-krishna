@@ -1,6 +1,14 @@
 import type {
   Announcement, Category, CommunitySubmission, ContentCollection, ContentItem, Creator,
 } from '../types';
+import photo1 from '../assets/home/home-photo-1.jpg';
+import photo2 from '../assets/home/home-photo-2.jpg';
+import photo3 from '../assets/home/home-photo-3.jpg';
+import photo4 from '../assets/home/home-photo-4.jpg';
+import photo5 from '../assets/home/home-photo-5.jpg';
+import photo6 from '../assets/home/home-photo-6.jpg';
+import photo7 from '../assets/home/home-photo-7.jpg';
+import photo8 from '../assets/home/home-photo-8.jpeg';
 
 /**
  * Local, frontend-only design-preview data.
@@ -27,6 +35,7 @@ export const PREVIEW_CONTENT: ContentItem[] = [
     packageType: 'Route',
     author: 'LittleKrishna Workshop',
     art: { from: '#262626', to: '#3a3a38', accent: '#d7ff00' },
+    coverImageUrl: photo8,
     gallery: [{ from: '#232323', to: '#3a3a38', accent: '#d7ff00' }],
     version: '1.0.0',
     releaseDate: '2026-11-01',
@@ -55,6 +64,7 @@ export const PREVIEW_CONTENT: ContentItem[] = [
     packageType: 'Train',
     author: 'LittleKrishna Workshop',
     art: { from: '#313131', to: '#4a4a47', accent: '#d7ff00' },
+    coverImageUrl: photo7,
     gallery: [{ from: '#161a22', to: '#4a4a47', accent: '#d7ff00' }],
     version: '0.9.0',
     releaseDate: '2026-10-22',
@@ -83,6 +93,7 @@ export const PREVIEW_CONTENT: ContentItem[] = [
     packageType: 'Route',
     author: 'Western Ghats Collective',
     art: { from: '#242424', to: '#525252', accent: '#d7ff00' },
+    coverImageUrl: photo1,
     gallery: [{ from: '#232323', to: '#4a4a47', accent: '#d7ff00' }],
     version: '0.6.0',
     releaseDate: '2026-10-14',
@@ -111,6 +122,7 @@ export const PREVIEW_CONTENT: ContentItem[] = [
     packageType: 'Train',
     author: 'Steam Heritage Works',
     art: { from: '#3a3a3a', to: '#4e4e4e', accent: '#d7ff00' },
+    coverImageUrl: photo2,
     gallery: [{ from: '#323232', to: '#4e4e4e', accent: '#d7ff00' }],
     version: '0.4.0',
     releaseDate: '2026-09-30',
@@ -139,6 +151,7 @@ export const PREVIEW_CONTENT: ContentItem[] = [
     packageType: 'Locomotive',
     author: 'Community Showcase',
     art: { from: '#242424', to: '#525252', accent: '#d7ff00' },
+    coverImageUrl: photo3,
     gallery: [{ from: '#272727', to: '#525252', accent: '#d7ff00' }],
     version: '0.7.0',
     releaseDate: '2026-10-01',
@@ -167,6 +180,7 @@ export const PREVIEW_CONTENT: ContentItem[] = [
     packageType: 'Asset',
     author: 'LittleKrishna Workshop',
     art: { from: '#3a3a3a', to: '#4e4e4e', accent: '#d7ff00' },
+    coverImageUrl: photo2,
     gallery: [{ from: '#323232', to: '#4e4e4e', accent: '#d7ff00' }],
     version: '0.5.0',
     releaseDate: '2026-09-18',
