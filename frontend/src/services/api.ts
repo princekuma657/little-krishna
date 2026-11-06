@@ -10,7 +10,7 @@ export class ApiError extends Error {
   }
 }
 
-const DEV_API_URL = 'https://little-krishna-2-bwx1.onrender.com/api/v1';
+const DEV_API_URL = '/api/v1';
 const PRODUCTION_API_URL = 'https://little-krishna-2-bwx1.onrender.com/api/v1';
 
 /**
