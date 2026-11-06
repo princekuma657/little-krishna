@@ -4,6 +4,7 @@ import Lenis from 'lenis';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
 import { api } from '../services/api';
+import { loadPublicData } from '../data/content';
 
 const REDUCED_MOTION = '(prefers-reduced-motion: reduce)';
 
@@ -122,6 +123,14 @@ export function Layout() {
   const { pathname } = useLocation();
   useScrollReveal(pathname);
   useCardTilt();
+
+  // Keep public data fresh: re-fetch from the backend on every route change so
+  // admin publish/unpublish/content edits reflect across the site without a
+  // full reload. Skips admin routes (they manage their own refresh).
+  useEffect(() => {
+    if (pathname.startsWith('/admin')) return;
+    void loadPublicData().catch(() => undefined);
+  }, [pathname]);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
