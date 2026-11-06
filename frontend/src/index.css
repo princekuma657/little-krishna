@@ -1196,8 +1196,9 @@ button:hover > .roll > span {
   font-size: clamp(18px, 2.4vw, 30px);
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: rgba(245, 245, 242, 0.55);
+  color: rgba(17, 17, 16, 0.55);
   transition: color 0.75s var(--ease-out), letter-spacing 0.75s var(--ease-out), transform 0.75s var(--ease-out);
+  text-shadow: 0 1px 12px rgba(245, 245, 242, 0.6);
 }
 
 /* Lando-style hover reveal inside card media */
@@ -1278,9 +1279,7 @@ button:hover > .roll > span {
   position: relative;
   display: block;
   border: 1px solid var(--line);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.35), transparent 46%),
-    var(--charcoal);
+  background: transparent;
   overflow: hidden;
   transition: transform 0.75s var(--ease-out), border-color 0.75s var(--ease-out), box-shadow 0.75s var(--ease-out);
   will-change: transform;
@@ -1304,11 +1303,13 @@ button:hover > .roll > span {
 .card__media {
   aspect-ratio: 16 / 10;
   overflow: hidden;
+  background: transparent;
 }
 
 .card__body {
   padding: 22px 22px 24px;
   border-top: 1px solid var(--line);
+  background: transparent;
   transition: border-color 0.75s var(--ease-out);
 }
 
@@ -2198,17 +2199,17 @@ table.table {
 
 .reveal {
   opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out);
+  transform: translateY(40px) scale(0.97);
+  transition: opacity 0.85s var(--ease-out), transform 0.85s var(--ease-out);
   will-change: opacity, transform;
 }
 
 .reveal--left {
-  transform: translate(-42px, 20px);
+  transform: translate(-80px, 24px) scale(0.97);
 }
 
 .reveal--right {
-  transform: translate(42px, 20px);
+  transform: translate(80px, 24px) scale(0.97);
 }
 
 .reveal.is-inview {
