@@ -162,7 +162,7 @@ p {
 }
 
 .section {
-  padding: clamp(80px, 10vw, 140px) 0;
+  padding: clamp(90px, 10vw, 140px) 0;
   position: relative;
 }
 
