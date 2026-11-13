@@ -898,13 +898,32 @@ button:hover > .roll > span {
   background: #1a1d15;
   display: grid;
   place-items: center;
-  /* Iris-out: GSAP tweens circle(141%) → circle(0%) on outro */
   clip-path: circle(141% at 50% 47%);
+  overflow: hidden;
+}
+
+/* Topographic line-art backdrop (Lando-style) */
+.intro::before {
+  content: '';
+  position: absolute;
+  inset: -20%;
+  background-image:
+    repeating-radial-gradient(circle at 30% 40%, transparent 0, transparent 80px, rgba(244, 244, 237, 0.03) 80px, rgba(244, 244, 237, 0.03) 81px),
+    repeating-radial-gradient(circle at 70% 60%, transparent 0, transparent 120px, rgba(244, 244, 237, 0.02) 120px, rgba(244, 244, 237, 0.02) 121px);
+  animation: topoDrift 20s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes topoDrift {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  100% { transform: translate(-2%, -2%) rotate(1deg); }
 }
 
 .intro__inner {
   text-align: center;
   padding: 0 24px;
+  position: relative;
+  z-index: 2;
 }
 
 .intro__mark {
@@ -2274,6 +2293,24 @@ table.table {
   text-align: center;
   background: #f4f4ed;
   color: #111112;
+  position: relative;
+  overflow: hidden;
+}
+
+.boot-screen::before {
+  content: '';
+  position: absolute;
+  inset: -20%;
+  background-image:
+    repeating-radial-gradient(circle at 30% 40%, transparent 0, transparent 80px, rgba(40, 44, 32, 0.04) 80px, rgba(40, 44, 32, 0.04) 81px),
+    repeating-radial-gradient(circle at 70% 60%, transparent 0, transparent 120px, rgba(40, 44, 32, 0.03) 120px, rgba(40, 44, 32, 0.03) 121px);
+  animation: topoDrift 20s linear infinite;
+  pointer-events: none;
+}
+
+.boot-screen > * {
+  position: relative;
+  z-index: 1;
 }
 
 .boot-screen__mark {
