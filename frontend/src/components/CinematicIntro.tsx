@@ -15,7 +15,7 @@ export function revealCanvas() {
   document.querySelector('#intro-canvas')?.remove();
   document.documentElement.style.background = '';
   const themeColor = document.querySelector('meta[name="theme-color"]');
-  if (themeColor) themeColor.setAttribute('content', '#f5f5f2');
+  if (themeColor) themeColor.setAttribute('content', '#f4f4ed');
 }
 
 export function CinematicIntro({ onDone }: { onDone: () => void }) {

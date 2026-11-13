@@ -54,7 +54,7 @@ export function BrandStory() {
               className="media"
               style={{ aspectRatio: '4 / 5', backgroundImage: `url(${brandPhoto})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
             >
-              <div style={{ position: 'absolute', inset: 0, background: 'rgba(215,255,0,0.1)' }} />
+              <div style={{ position: 'absolute', inset: 0, background: 'rgba(210,255,0,0.1)' }} />
               <div className="media__label">The Iron Road</div>
             </div>
           </div>

@@ -99,7 +99,7 @@ export function Hero() {
           {import.meta.env.VITE_VIDEO_HERO ? <source src={import.meta.env.VITE_VIDEO_HERO} type="video/mp4" /> : null}
         </video>
         <div className="hero__art" style={{ backgroundImage: `url(${heroPhoto})`, backgroundSize: 'cover', backgroundPosition: 'center' }} />
-        <div className="hero__veil" style={{ background: 'linear-gradient(180deg, rgba(8,8,8,0.45) 0%, rgba(8,8,8,0.62) 55%, rgba(8,8,8,0.88) 100%)' }} />
+        <div className="hero__veil" style={{ background: 'linear-gradient(180deg, rgba(40,44,32,0.45) 0%, rgba(40,44,32,0.62) 55%, rgba(40,44,32,0.88) 100%)' }} />
       </div>
       <div className="container hero__content">
         <span className="hero__kicker">MSTS · RailWorks · Train Simulator Classic</span>

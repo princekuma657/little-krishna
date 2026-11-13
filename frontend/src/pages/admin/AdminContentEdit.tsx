@@ -45,7 +45,7 @@ function formFromItem(item: ContentItem): FormState {
     releaseNotes: item.releaseNotes,
     artFrom: item.art.from,
     artTo: item.art.to,
-    artAccent: item.art.accent || '#d7ff00',
+    artAccent: item.art.accent || '#d2ff00',
     isPublished: item.status === 'published',
     isFeatured: item.featured,
   };
