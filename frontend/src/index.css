@@ -19,32 +19,31 @@
   --midnight: #282c20;
   --midnight-2: #1a1d15;
   --charcoal: #f4f4ed;
-  --charcoal-2: #e8e8e0;
-  --charcoal-3: #d8d8d0;
-  --warm-white: #282c20;
+  --charcoal-2: #ebeee0;
+  --charcoal-3: #dde1d2;
+  --warm-white: #111112;
   --warm-white-2: #f4f4ed;
-  --silver: #b8bcae;
-  --silver-2: #9a9e90;
+  --silver: #535450;
+  --silver-2: #3b3c38;
   --signal-red: #d2ff00;
-  --signal-red-dark: #a8cc00;
-  --muted-gold: #b8bcae;
+  --signal-red-dark: #b2c73a;
+  --muted-gold: #535450;
   --muted-gold-2: #d2ff00;
   --lime: #d2ff00;
-  --lime-off: #a8cc00;
-  --ink-black: #282c20;
-  --flame: #ff5a5f;
+  --lime-off: #b2c73a;
+  --ink-black: #111112;
+  --flame: #ff6b00;
   --paper: #f4f4ed;
-  --paper-ink: #282c20;
-  --paper-line: rgba(55, 65, 81, 0.16);
+  --paper-ink: #111112;
+  --paper-line: rgba(185, 187, 173, 0.4);
   --lime-rgb: 210, 255, 0;
-  --line: rgba(55, 65, 81, 0.16);
-  --line-strong: rgba(55, 65, 81, 0.32);
+  --line: rgba(185, 187, 173, 0.6);
+  --line-strong: rgba(185, 187, 173, 0.8);
   --ink-on-dark: #b8bcae;
   --ink-on-dark-strong: #f4f4ed;
   --shadow-lift:
-    0 10px 24px rgba(40, 44, 32, 0.14),
-    0 34px 80px rgba(40, 44, 32, 0.16),
-    0 18px 70px rgba(var(--lime-rgb), 0.08);
+    0 0 0 1px rgba(0, 0, 0, 0.1),
+    0 1px 3px rgba(0, 0, 0, 0.1);
   --font-display: 'Mona Sans', 'Arial Black', sans-serif;
   --font-body: 'Mona Sans', 'Segoe UI', system-ui, sans-serif;
   --font-mono: 'Cascadia Code', 'SFMono-Regular', Consolas, monospace;
@@ -596,14 +595,14 @@ p {
 .auth-panel .card,
 .admin-sidebar .card,
 .shot .card {
-  --warm-white: #282c20;
+  --warm-white: #111112;
   --warm-white-2: #f4f4ed;
-  --silver: #b8bcae;
-  --silver-2: #63635f;
-  --ink-on-dark: #b8bcae;
-  --ink-on-dark-strong: #282c20;
-  --line: rgba(55, 65, 81, 0.16);
-  --line-strong: rgba(55, 65, 81, 0.32);
+  --silver: #535450;
+  --silver-2: #3b3c38;
+  --ink-on-dark: #535450;
+  --ink-on-dark-strong: #111112;
+  --line: rgba(185, 187, 173, 0.6);
+  --line-strong: rgba(185, 187, 173, 0.8);
   color: var(--warm-white);
 }
 
@@ -626,8 +625,8 @@ p {
   -webkit-backdrop-filter: blur(18px) saturate(1.4);
   --warm-white: #f4f4ed;
   --warm-white-2: #f4f4ed;
-  --silver: #b8bcae;
-  --silver-2: #9a9e90;
+  --silver: #535450;
+  --silver-2: #3b3c38;
   --ink-on-dark: #b8bcae;
   --ink-on-dark-strong: #f4f4ed;
   --line: rgba(55, 65, 81, 0.3);
@@ -1961,46 +1960,46 @@ table.table {
 
 .auth-card {
   background: #f4f4ed;
-  color: #282c20;
-  border-color: rgba(55, 65, 81, 0.16);
+  color: #111112;
+  border-color: rgba(185, 187, 173, 0.6);
 }
 
 .auth-card h1,
 .auth-card .label,
 .auth-card .input,
 .auth-card .field .label {
-  color: #282c20;
+  color: #111112;
 }
 
 .auth-card .input {
-  background: rgba(55, 65, 81, 0.04);
-  border-color: rgba(55, 65, 81, 0.24);
+  background: rgba(185, 187, 173, 0.1);
+  border-color: rgba(185, 187, 173, 0.4);
 }
 
 .auth-card .input::placeholder {
-  color: rgba(55, 65, 81, 0.45);
+  color: rgba(83, 84, 80, 0.5);
 }
 
 .auth-card .input:focus {
-  background: rgba(55, 65, 81, 0.06);
+  background: rgba(185, 187, 173, 0.15);
   border-color: #d2ff00;
   box-shadow: 0 0 0 3px rgba(210, 255, 0, 0.12);
 }
 
 .auth-card .eyebrow {
-  color: #b8bcae;
+  color: #535450;
 }
 
 .auth-card .auth-alt {
-  color: #63635f;
+  color: #3b3c38;
 }
 
 .auth-card .auth-alt a {
-  color: #b8bcae;
+  color: #282c20;
 }
 
 .auth-card .auth-alt a:hover {
-  color: #282c20;
+  color: #111112;
 }
 
 .auth-card .form-error {
@@ -2274,7 +2273,7 @@ table.table {
   padding: 40px;
   text-align: center;
   background: #f4f4ed;
-  color: #282c20;
+  color: #111112;
 }
 
 .boot-screen__mark {
