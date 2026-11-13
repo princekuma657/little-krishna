@@ -524,10 +524,10 @@ p {
   --warm-white-2: #f4f4ed;
   --silver: #b8bcae;
   --silver-2: #9a9e90;
-  --ink-on-dark: rgba(244, 244, 237, 0.66);
-  --ink-on-dark-strong: rgba(244, 244, 237, 0.92);
-  --line: rgba(244, 244, 237, 0.12);
-  --line-strong: rgba(244, 244, 237, 0.3);
+  --ink-on-dark: #b8bcae;
+  --ink-on-dark-strong: #f4f4ed;
+  --line: rgba(55, 65, 81, 0.3);
+  --line-strong: rgba(55, 65, 81, 0.5);
   color: var(--warm-white);
 }
 
@@ -621,17 +621,17 @@ p {
   transition: background-color 0.4s var(--ease-out), border-color 0.4s var(--ease-out), box-shadow 0.4s var(--ease-out);
   border-bottom: 1px solid rgba(244, 244, 237, 0.08);
   border-radius: 0;
-  background: rgba(11, 11, 11, 0.86);
+  background: rgba(40, 44, 32, 0.86);
   backdrop-filter: blur(18px) saturate(1.4);
   -webkit-backdrop-filter: blur(18px) saturate(1.4);
   --warm-white: #f4f4ed;
   --warm-white-2: #f4f4ed;
   --silver: #b8bcae;
   --silver-2: #9a9e90;
-  --ink-on-dark: rgba(244, 244, 237, 0.66);
-  --ink-on-dark-strong: rgba(244, 244, 237, 0.92);
-  --line: rgba(244, 244, 237, 0.12);
-  --line-strong: rgba(244, 244, 237, 0.3);
+  --ink-on-dark: #b8bcae;
+  --ink-on-dark-strong: #f4f4ed;
+  --line: rgba(55, 65, 81, 0.3);
+  --line-strong: rgba(55, 65, 81, 0.5);
   color: var(--warm-white);
 }
 
