@@ -3,6 +3,7 @@ import { CinematicIntro, revealCanvas } from '../components/CinematicIntro';
 import FloatingNavbarDemo from '../components/floating-navbar-demo';
 import { HomeMarquee } from '../sections/home/Marquee';
 import { Hero } from '../sections/home/Hero';
+import LKHeroParallax from '../components/lk-hero-parallax';
 import { BrandStory } from '../sections/home/BrandStory';
 import { OnTheTracks } from '../sections/home/OnTheTracks';
 import { BeyondTheTracks } from '../sections/home/BeyondTheTracks';
@@ -28,7 +29,7 @@ export function Home() {
     <>
       {showIntro ? <CinematicIntro onDone={handleIntroDone} /> : null}
       <FloatingNavbarDemo />
-      <Hero />
+      <LKHeroParallax />
       <BrandStory />
       <HomeMarquee />
       <OnTheTracks />

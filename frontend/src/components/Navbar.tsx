@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'motion/react';
+import { cn } from '../lib/utils';
 
 const LINKS = [
   { to: '/', label: 'Home' },
@@ -16,35 +18,28 @@ const LINKS = [
 const ADMIN_ROLES = ['super_admin', 'content_manager', 'support_manager', 'analytics_viewer'];
 
 export function Navbar() {
-  const [scrolled, setScrolled] = useState(false);
+  const [visible, setVisible] = useState(true);
   const [open, setOpen] = useState(false);
   const { user, status, signOut } = useAuth();
   const navigate = useNavigate();
   const { pathname } = useLocation();
-
-  // Routine use: pages whose top of page is a dark surface (home hero,
-  // content detail covers, or the open mobile menu) need light nav text.
-  const darkTop = pathname === '/' || pathname.startsWith('/content/');
-  const overDark = open || (!scrolled && darkTop);
+  const { scrollYProgress } = useScroll();
   const isAdmin = Boolean(user?.roles.some((role) => ADMIN_ROLES.includes(role)));
 
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setOpen(false);
-    };
-    document.addEventListener('keydown', onKey);
-    return () => document.removeEventListener('keydown', onKey);
-  }, [open]);
-
-  const linkDelay = (i: number) => (open ? `${90 + i * 42}ms` : '0ms');
+  useMotionValueEvent(scrollYProgress, 'change', (current) => {
+    if (typeof current === 'number') {
+      const direction = current - (scrollYProgress.getPrevious() ?? 0);
+      if (scrollYProgress.get() < 0.05) {
+        setVisible(true);
+      } else {
+        if (direction < 0) {
+          setVisible(true);
+        } else {
+          setVisible(false);
+        }
+      }
+    }
+  });
 
   const doSignOut = async () => {
     setOpen(false);
@@ -54,64 +49,113 @@ export function Navbar() {
 
   return (
     <>
-      <header className={`nav ${scrolled ? 'nav--scrolled' : ''} ${overDark ? 'nav--over-dark' : ''} ${open ? 'nav--open' : ''}`}>
-        <div className="container nav__inner">
-          <Link to="/" className="nav__logo" onClick={() => setOpen(false)}>
-            <span className="nav__logo-mark">L</span>
-            LittleKrishna
-          </Link>
-          <nav aria-label="Primary">
-            <ul className="nav__links">
-              {LINKS.map((l) => (
-                <li key={l.to}>
-                  <NavLink className={({ isActive }) => `nav__link ${isActive ? 'nav__link--active' : ''}`} to={l.to}>
-                    <span className="roll"><span>{l.label}</span></span>
-                  </NavLink>
-                </li>
+      <AnimatePresence mode="wait">
+        <motion.div
+          initial={{ opacity: 1, y: 0 }}
+          animate={{ y: visible ? 0 : -100, opacity: visible ? 1 : 0 }}
+          transition={{ duration: 0.2 }}
+          className="flex max-w-fit fixed top-4 inset-x-0 mx-auto z-[5000] items-center justify-center"
+        >
+          <div className="flex items-center justify-center gap-2 rounded-full border border-white/10 bg-white/80 px-2 py-1.5 shadow-lg shadow-black/10 backdrop-blur-md dark:border-white/10 dark:bg-black/50">
+            <Link to="/" className="flex items-center gap-2 rounded-full px-3 py-2 text-sm font-bold text-neutral-900 dark:text-white">
+              <span className="w-6 h-6 rounded-full bg-[#282c20] text-[#d2ff00] flex items-center justify-center text-xs font-bold">L</span>
+              <span className="hidden sm:block">LittleKrishna</span>
+            </Link>
+            <div className="hidden md:flex items-center gap-1">
+              {LINKS.slice(1).map((l) => (
+                <NavLink
+                  key={l.to}
+                  to={l.to}
+                  className={({ isActive }) =>
+                    cn(
+                      'relative rounded-full px-3 py-2 text-sm font-medium transition-colors',
+                      isActive
+                        ? 'bg-[#282c20] text-[#d2ff00]'
+                        : 'text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-300 dark:hover:bg-white/10 dark:hover:text-white'
+                    )
+                  }
+                >
+                  {l.label}
+                </NavLink>
               ))}
-            </ul>
-          </nav>
-          <div className="nav__actions">
-            {status === 'loading' ? null : user ? (
+            </div>
+            <div className="h-5 w-px bg-neutral-200 dark:bg-white/10" />
+            <div className="flex items-center gap-1">
+              {status === 'loading' ? null : user ? (
+                <>
+                  {isAdmin && (
+                    <Link to="/admin" className="relative rounded-full px-3 py-2 text-sm font-medium text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-300 dark:hover:bg-white/10 dark:hover:text-white">
+                      Admin
+                    </Link>
+                  )}
+                  <Link to="/profile" className="relative rounded-full px-3 py-2 text-sm font-medium text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-300 dark:hover:bg-white/10 dark:hover:text-white">
+                    @{user.username}
+                  </Link>
+                  <button
+                    className="relative rounded-full bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition-all hover:bg-neutral-800 hover:shadow-lg dark:bg-white dark:text-black dark:hover:bg-neutral-100"
+                    onClick={() => void doSignOut()}
+                  >
+                    Sign Out
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link to="/login" className="relative rounded-full px-3 py-2 text-sm font-medium text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-300 dark:hover:bg-white/10 dark:hover:text-white">
+                    Sign In
+                  </Link>
+                  <Link to="/register" className="relative rounded-full bg-[#282c20] px-4 py-2 text-sm font-medium text-[#d2ff00] transition-all hover:bg-[#1a1d15] hover:shadow-lg">
+                    Join
+                  </Link>
+                </>
+              )}
+            </div>
+            <button
+              className="md:hidden relative rounded-full px-3 py-2 text-sm font-medium text-neutral-600 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-white/10"
+              onClick={() => setOpen((v) => !v)}
+            >
+              {open ? '✕' : '☰'}
+            </button>
+          </div>
+        </motion.div>
+      </AnimatePresence>
+
+      {/* Mobile menu */}
+      {open && (
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          className="fixed top-20 inset-x-4 z-[4999] rounded-2xl border border-white/10 bg-white/90 backdrop-blur-md p-4 shadow-xl md:hidden"
+        >
+          <div className="flex flex-col gap-2">
+            {LINKS.map((l) => (
+              <NavLink
+                key={l.to}
+                to={l.to}
+                onClick={() => setOpen(false)}
+                className={({ isActive }) =>
+                  cn('rounded-xl px-4 py-3 text-sm font-medium transition-colors',
+                    isActive ? 'bg-[#282c20] text-[#d2ff00]' : 'text-neutral-700 hover:bg-neutral-100')
+                }
+              >
+                {l.label}
+              </NavLink>
+            ))}
+            {user ? (
               <>
-                {isAdmin ? <Link className="btn btn--outline btn--sm" to="/admin">Admin</Link> : null}
-                <Link className="btn btn--outline btn--sm" to="/profile">@{user.username}</Link>
-                <button className="btn btn--primary btn--sm" onClick={() => void doSignOut()}>Sign Out</button>
+                <NavLink to="/profile" onClick={() => setOpen(false)} className="rounded-xl px-4 py-3 text-sm font-medium text-neutral-700 hover:bg-neutral-100">Profile</NavLink>
+                {isAdmin && <NavLink to="/admin" onClick={() => setOpen(false)} className="rounded-xl px-4 py-3 text-sm font-medium text-neutral-700 hover:bg-neutral-100">Admin</NavLink>}
+                <button className="rounded-xl px-4 py-3 text-sm font-medium text-white bg-neutral-900 hover:bg-neutral-800" onClick={() => void doSignOut()}>Sign Out</button>
               </>
             ) : (
               <>
-                <Link className="btn btn--outline btn--sm" to="/login">Sign In</Link>
-                <Link className="btn btn--primary btn--sm" to="/register">Join</Link>
+                <NavLink to="/login" onClick={() => setOpen(false)} className="rounded-xl px-4 py-3 text-sm font-medium text-neutral-700 hover:bg-neutral-100">Sign In</NavLink>
+                <NavLink to="/register" onClick={() => setOpen(false)} className="rounded-xl px-4 py-3 text-sm font-medium text-white bg-[#282c20]">Join</NavLink>
               </>
             )}
-            <button className="nav__burger" aria-label="Toggle navigation" aria-expanded={open} onClick={() => setOpen((v) => !v)}>
-              <span className="nav__burger-bar" />
-              <span className="nav__burger-bar" />
-              <span className="nav__burger-bar" />
-            </button>
           </div>
-        </div>
-      </header>
-      <div className={`nav__mobile ${open ? 'is-open' : ''}`} inert={!open} aria-hidden={!open}>
-        {LINKS.map((l, i) => (
-          <Link key={l.to} to={l.to} onClick={() => setOpen(false)} style={{ transitionDelay: linkDelay(i) }}>
-            {l.label}
-          </Link>
-        ))}
-        {user ? (
-          <>
-            <Link to="/profile" onClick={() => setOpen(false)} style={{ transitionDelay: linkDelay(LINKS.length) }}>Profile</Link>
-            <Link to="/downloads" onClick={() => setOpen(false)} style={{ transitionDelay: linkDelay(LINKS.length + 1) }}>Downloads</Link>
-            {isAdmin ? <Link to="/admin" onClick={() => setOpen(false)} style={{ transitionDelay: linkDelay(LINKS.length + 2) }}>Admin Console</Link> : null}
-            <button className="btn btn--primary" onClick={() => void doSignOut()}>Sign Out</button>
-          </>
-        ) : (
-          <>
-            <Link to="/login" onClick={() => setOpen(false)} style={{ transitionDelay: linkDelay(LINKS.length) }}>Sign In</Link>
-            <Link className="btn btn--primary" to="/register" onClick={() => setOpen(false)} style={{ transitionDelay: linkDelay(LINKS.length + 1) }}>Join The Community</Link>
-          </>
-        )}
-      </div>
+        </motion.div>
+      )}
     </>
   );
 }
