@@ -18,6 +18,7 @@ import { Profile } from './pages/Profile';
 import { Legal } from './pages/Legal';
 import { Contact } from './pages/Contact';
 import { NotFound } from './pages/NotFound';
+import HeroParallaxDemo from './components/hero-parallax-demo';
 import { AdminLayout } from './pages/admin/AdminLayout';
 import { AdminDashboard } from './pages/admin/AdminDashboard';
 import { AdminContent } from './pages/admin/AdminContent';
@@ -122,6 +123,7 @@ export default function App() {
         <Route path="/privacy" element={<Legal kind="privacy" />} />
         <Route path="/terms" element={<Legal kind="terms" />} />
         <Route path="/contact" element={<Contact />} />
+      <Route path="/hero-parallax" element={<HeroParallaxDemo />} />
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminDashboard />} />
           <Route path="dashboard" element={<AdminDashboard />} />

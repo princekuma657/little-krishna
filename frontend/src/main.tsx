@@ -4,6 +4,7 @@ import App from './App';
 import { AuthProvider } from './context/AuthContext';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import './index.css';
+import './tailwind.css';
 
 createRoot(document.getElementById('root')!).render(
   <ErrorBoundary>
