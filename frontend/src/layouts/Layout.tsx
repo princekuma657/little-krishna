@@ -1,9 +1,9 @@
 import { Outlet, useLocation } from 'react-router-dom';
 import { useLayoutEffect, useEffect } from 'react';
 import Lenis from 'lenis';
-import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
 import { api } from '../services/api';
+import FloatingNavbarDemo from '../components/floating-navbar-demo';
 import { loadPublicData } from '../data/content';
 
 const REDUCED_MOTION = '(prefers-reduced-motion: reduce)';
@@ -172,7 +172,7 @@ export function Layout() {
       <a href="#main" className="visually-hidden">
         Skip to content
       </a>
-      <Navbar />
+      <FloatingNavbarDemo />
       <main id="main" className="page" key={pathname}>
         <Outlet />
       </main>

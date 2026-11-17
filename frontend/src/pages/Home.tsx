@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { CinematicIntro, revealCanvas } from '../components/CinematicIntro';
-import FloatingNavbarDemo from '../components/floating-navbar-demo';
 import { HomeMarquee } from '../sections/home/Marquee';
 import { Hero } from '../sections/home/Hero';
 import LKHeroParallax from '../components/lk-hero-parallax';
@@ -28,7 +27,6 @@ export function Home() {
   return (
     <>
       {showIntro ? <CinematicIntro onDone={handleIntroDone} /> : null}
-      <FloatingNavbarDemo />
       <LKHeroParallax />
       <BrandStory />
       <HomeMarquee />
