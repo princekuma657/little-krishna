@@ -19,6 +19,7 @@ import { Legal } from './pages/Legal';
 import { Contact } from './pages/Contact';
 import { NotFound } from './pages/NotFound';
 import HeroParallaxDemo from './components/hero-parallax-demo';
+import FloatingNavbarDemo from './components/floating-navbar-demo';
 import { AdminLayout } from './pages/admin/AdminLayout';
 import { AdminDashboard } from './pages/admin/AdminDashboard';
 import { AdminContent } from './pages/admin/AdminContent';
